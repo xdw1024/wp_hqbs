@@ -1,0 +1,361 @@
+{load href="__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="page-title">
+    <div class="title_left">
+        <h3>管理员管理</h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="可搜账户名、姓名、所属组织、所属角色、手机号">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn btn-success" href="javascript:;" onclick="addAccount()"><span>添加管理员</span></a>&nbsp;&nbsp;
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>账户名</th>
+                        <th>真实姓名</th>
+                        <th>所属组织</th>
+                        <th>角色</th>
+                        <th>手机号</th>
+                        <!--<th>创建时间</th>-->
+                        <!--<th>创建人</th>-->
+                        <!--<th>上次登陆时间</th>-->
+                        <th>上次登录IP</th>
+                        <!--<th>登陆次数</th>-->
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="admin-table">
+                    {volist name="admin_list" id="v"}
+                    <tr id="{$v.maccount_id}">
+                        <td scope="row">{$i}</td>
+                        <td>{$v.maccount_name}</td>
+                        <td>{$v.mreal_name}</td>
+                        <td>{$v.party_org_name}</td>
+                        <td>{$v.sys_role_name}</td>
+                        <td>{$v.mobile_number}</td>
+                        <td>{$v.last_ip}</td>
+                        <td id="state">
+                            {if condition="$v.is_use eq 1"}
+                            <a class="btn-sm btn btn-default" onclick="isUse('{$v.maccount_id}')">开启</a>
+                            {else/}
+                            <a class="btn-sm btn btn-default" onclick="isUse('{$v.maccount_id}')">禁用</a>
+                            {/if}
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-success" href="javascript:" onclick="editAccount('{$v.maccount_id}')">修改</a>
+                            <a class="btn btn-sm btn-default" href="javascript:" onclick="deleteAccount('{$v.maccount_id}')">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$admin_list->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） 添加 -->
+<div class="modal fade" id="option_admin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="option_user_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加管理用户</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">所属角色:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="role" id="role">
+                                {volist name="role_list" id="item"}
+                                <option value="{$item.sys_role_id}">{$item.sys_role_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">所属组织:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12" style="position: relative">
+                            <input type="text" id="orgSelect" readonly class="form-control col-md-12 col-xs-12" onclick="showMenu();" placeholder="请点击选择组织">
+                            <input type="hidden" name="party_org" id="party_org" class="form-control col-md-12 col-xs-12">
+                            <div id="menuContent" class="menuContentd" style="display:none;position: absolute; top: 34px;left: 10px; right:10px;z-index:100;background-color: #fff;border:1px solid #ddd;max-height: 350px;overflow-y: auto">
+                                <ul id="treeOrg" class="ztree" style="margin-top:0; width:300px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">真实姓名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="mreal_name" name="mreal_name" placeholder="请输入真实姓名">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">帐号名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="maccount_name" name="maccount_name" placeholder="请输入帐号名">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">密码:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="mpassword" name="mpassword" placeholder="请输入密码">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">手机号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="mobile_number" name="mobile_number" placeholder="请输入手机号">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">状态:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="is_use" id="is_use">
+                                <option value="1">开启</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">排序:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" id="sort_num" name="sort_num" class="form-control col-md-12 col-xs-12">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <input type="hidden" name="action_status" id="action_status" value="insert">
+                        <input type="hidden" name="maccount_id" id="maccount_id">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">关闭</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveOption()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+ <!--模态框 修改-->
+<script>
+    function isUse(maccount_id) {
+        $.post('{:zw_build_url("admin/isUse")}',{maccount_id: maccount_id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+               window.location.reload();
+            }
+        });
+    }
+
+    function deleteAccount(id) {
+        if(id === '{:lw_get_current_admin_id()}'){
+            return show_notice('不能删除自己','failed');
+        }
+        $.post('{:zw_build_url("admin/delete")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+
+    function addAccount() {
+        $('#maccount_name').val('');
+        $('#mpassword').val('');
+        $('#mreal_name').val('');
+        $('#is_use').val('1');
+        $('#sort_num').val('1');
+        $("#orgSelect").val('');
+        $("#party_org").val('');
+        $('#mobile_number').val('');
+        $('#myModalLabel').text('添加管理用户');
+        $('#action_status').val('insert');
+        $('#option_admin').modal('show');
+    }
+
+    function editAccount(id) {
+        (id === '{:lw_get_current_admin_id()}') ? $('#role').attr('disabled', true) : $('#role').attr('disabled', false);
+
+        $.post('{:zw_build_url("admin/edit")}',{id: id},function (data) {
+            if(data.status === SUCCESS_CODE){
+                $('#maccount_name').val(data.data.maccount_name);
+                $('#mreal_name').val(data.data.mreal_name);
+                $('#mpassword').val('');
+                $('#role').val(data.data.sys_role_id);
+                $('#is_use').val(data.data.is_use);
+                $('#sort_num').val(data.data.sort_num);
+                $("#orgSelect").val(data.data.org_name);
+                $('#party_org').val(data.data.party_org_id);
+                $('#maccount_id').val(data.data.maccount_id);
+                $('#mobile_number').val(data.data.mobile_number);
+                $('#myModalLabel').text('修改管理用户');
+                $('#action_status').val('editor');
+                $('#option_admin').modal('show');
+                return true;
+            }else{
+                show_notice(data.message);
+            }
+        });
+    }
+
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("admin/save")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#option_user_form").ajaxSubmit(options);
+    }
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#treeOrg"), setting, zNodes);
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    function searchNotice(search_info) {
+        ajaxResult("{:zw_build_url('admin/searchAdmin')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                console.log(data);
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var last_ip = (null === item.last_ip) ? '' : item.last_ip;
+                        var mobile_number = (null === item.mobile_number) ? '' : item.mobile_number;
+                        var sys_role_name = (null === item.sys_role_name) ? '' : item.sys_role_name;
+                        var party_org_name = (null === item.party_org_name) ? '' : item.party_org_name;
+                        if(item.is_use == 1){
+                            var is_use = "<a class=\"btn-sm btn btn-default\" onclick=\"isUse("+item.maccount_id+")\">开启</a>"
+                        }else{
+                            var is_use = "<a class=\"btn-sm btn btn-default\" onclick=\"isUse("+item.maccount_id+")\">禁用</a>"
+                        }
+                        html += '<tr id="' + item.maccount_id + '">' +
+                            '         <td scope="row">'+(i+1)+'</td>' +
+                            '         <td>' + item.maccount_name + '</td>' +
+                            '         <td>' + item.mreal_name + '</td>' +
+                            '         <td>' + party_org_name + '</td>' +
+                            '         <td>' + item.sys_role_name + '</td>' +
+                            '         <td>' + mobile_number + '</td>' +
+                            '         <td>' + last_ip + '</td>' +
+                            '         <td id="state">' +
+                            '         '+is_use +
+                            '         </td>' +
+                            '         <td>' +
+                            '             <a class="btn btn-sm btn-success" href="javascript:;" onclick="editAccount(' + item.maccount_id + ')">修改</a>' +
+                            '             <a class="btn btn-sm btn-default" href="javascript:;" onclick="deleteAccount(' + item.maccount_id + ')">删除</a>' +
+                            '         </td>' +
+                            '    </tr>';
+                    });
+                    $('#admin-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+    var setting = {
+        view: {
+//            dblClickExpand: false,
+            showIcon: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+
+    var zNodes ={$org_list};
+
+    function onClick(e, treeId, treeNode) {
+        console.log(treeId, treeNode.id, treeNode.name);
+        $("#orgSelect").val(treeNode.name);
+        $("#party_org").val(treeNode.id);
+        hideMenu();
+    }
+
+    function showMenu() {
+        $("#menuContent").slideDown("fast");
+        $("body").bind("mousedown", onBodyDown);
+    }
+
+    function hideMenu() {
+        $("#menuContent").fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+
+    function onBodyDown(event) {
+        if (!(event.target.id === "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+            hideMenu();
+        }
+    }
+
+</script>

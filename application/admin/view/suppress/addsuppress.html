@@ -1,0 +1,295 @@
+{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css,__JS__ckeditor/ckeditor.js" /}
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><a href="{:zw_build_url('suppress/index')}">缉私案件管理</a>---新增缉私案件信息</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+                <div class="col-md-12 col-sm-12 col-xs-12 red" id="tips">
+                    <span></span>
+                </div>
+                <br />
+                <form method="post" id="set_supp_form" class="form-horizontal form-label-left" action="#">
+                    <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="x_content">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="org_name">单位 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="org_name" name="org_name" readonly value="{$org['party_org_name']}" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">时间 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input id="filing_time" name="filing_time" class="form-control col-md-12 col-xs-12" type="text"  readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="goods_type">物品类别 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="goods_type" name="goods_type"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="goods">详细物品 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="goods" name="goods"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="report">上交数量(吨) <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="report" name="report"   required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="goods_value">价值(万) <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="goods_value" name="goods_value"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="goods_tranfer">移交数量(吨) <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="goods_tranfer" name="goods_tranfer" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fines">罚没款(元) <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="fines" name="fines" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="verify">核拨(次) <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="verify" name="verify"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="tranfer_result">移交处理情况 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="tranfer_result" name="tranfer_result" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9 col-sm-9 col-xs-12">
+                        <div class="x_content">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="vehicle_involved">涉案车辆 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="vehicle_involved" name="vehicle_involved"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="personnel_involved">涉案人员 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="personnel_involved" name="personnel_involved" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-md-3 col-sm-3 col-xs-12" for="license_plate">车牌 <span class="required">*</span>-->
+                                <!--</label>-->
+                                <!--<div class="col-md-9 col-sm-9 col-xs-12">-->
+                                    <!--<input type="text" id="license_plate" name="license_plate" required="required"  class="form-control col-md-7 col-xs-12">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-md-3 col-sm-3 col-xs-12" for="storage_location">存放地点 <span class="required">*</span>-->
+                                <!--</label>-->
+                                <!--<div class="col-md-9 col-sm-9 col-xs-12">-->
+                                    <!--<input type="text" id="storage_location" name="storage_location" required="required"  class="form-control col-md-7 col-xs-12">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-md-3 col-sm-3 col-xs-12" for="vehicle_model">车辆型号 <span class="required">*</span>-->
+                                <!--</label>-->
+                                <!--<div class="col-md-9 col-sm-9 col-xs-12">-->
+                                    <!--<input type="text" id="vehicle_model" name="vehicle_model" required="required"  class="form-control col-md-7 col-xs-12">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-md-3 col-sm-3 col-xs-12" for="mobile_num">手机号码 <span class="required">*</span>-->
+                                <!--</label>-->
+                                <!--<div class="col-md-9 col-sm-9 col-xs-12">-->
+                                    <!--<input type="text" id="mobile_num" name="mobile_num" required="required"  class="form-control col-md-7 col-xs-12">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="corps_reply">总队批复 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="corps_reply" name="corps_reply" required="required"  class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="vehicle_tranfer">移交车辆 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="number" id="vehicle_tranfer" name="vehicle_tranfer" required="required"  class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="case_tranfer">移交案件 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="case_tranfer" name="case_tranfer" required="required"  class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="case_return">案件返还 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="case_return" name="case_return" required="required"  class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="case_result">处理情况 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="case_result" name="case_result" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="notes">备注 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="notes" name="notes" required="required"  class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="end_time">月报截止 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <input type="text" id="end_time" name="end_time" required="required" readonly class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <input type="hidden" id="org_id" name="org_id" value="{$org['party_org_id']}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 group_center">
+                            <a href="{:zw_build_url('suppress/index')}" class="btn btn-default">取消</a>
+                            <a href="javascript:;" onclick="saveOption()" class="btn btn-success">保存</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="__JS__ckeditor/ckeditor.js"></script>
+{css href="__CSS__jedate.css"/}
+{js href="__JS__jquery.jedate.js" /}
+<script>
+    /**时间控件*/
+    var start = {
+        skinCell:"jedategreen",
+        format: 'YYYY-MM-DD hh:mm:ss',
+        minDate: $.nowDate(0), //设定最小日期为当前日期
+        isinitVal:true,
+        ishmsVal:false
+    };
+    var end = {
+        skinCell:"jedategreen",
+        format: 'YYYY-MM-DD hh:mm:ss',
+        maxDate: $.nowDate(0), //设定最小日期为当前日期
+        isinitVal:true,
+        ishmsVal:false
+    };
+    var date = {
+        skinCell:"jedategreen",
+        format: 'YYYY-MM-DD hh:mm:ss',
+        minDate:  "1970-01-01", //设定最小日期为当前日期
+        isinitVal:true,
+        ishmsVal:false
+    };
+    $(document).ready(function () {
+        $("#org_id").val();
+        $("#filing_time").val();
+        $("#goods_type").val();
+        $("#goods").val();
+        $("#report").val();
+        $("#goods_value").val();
+        $("#goods_tranfer").val();
+        $("#fines").val();
+        $("#verify").val();
+        $("#tranfer_result").val();
+        $("#vehicle_involved").val();
+        $("#personnel_involved").val();
+//        $("#license_plate").val();
+//        $("#storage_location").val();
+//        $("#vehicle_model").val();
+//        $("#mobile_num").val();
+        $("#corps_reply").val();
+        $("#vehicle_tranfer").val();
+        $("#case_tranfer").val();
+        $("#case_return").val();
+        $("#case_result").val();
+        $("#notes").val();
+        $("#end_time").val();
+        $("#filing_time").jeDate(end);
+        $("#filing_time").val();
+        $("#end_time").jeDate(date);
+        $("#end_time").val();
+        $(document).on("click","#filing_time",function(){
+            $(this).jeDate(end);
+        });
+        $(document).on("click","#end_time",function(){
+            $(this).jeDate(date);
+        });
+    });
+
+    function saveOption() {
+        var goods = $("#goods").val();
+        if(goods == ''){
+            show_notice('详细物品必须填写,请输入信息再提交');
+            return;
+        }
+        var options = {
+            url: '{:zw_build_url("suppress/saveaddSuppress")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    show_notice(data.message);
+                    window.location.href = data.data;
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#set_supp_form").ajaxSubmit(options);
+    }
+
+</script>

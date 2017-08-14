@@ -1,0 +1,181 @@
+<style>
+    .datainp { width: 200px; height: 34px; margin-right: 5px; border: 1px #A5D2EC solid; }
+    .wicon { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat: no-repeat; background-position: right center; }
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h3 style="padding-top: 10px;"><a href="{:zw_build_url('illegal/index')}">非法入境信息管理</a>---非法入境图表统计</h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input class="datainp wicon" id="year" type="text" placeholder="YYYY"  readonly style=" float: right; width: 100px; border-radius:0 ">
+                <span class="input-group-btn">
+                    <button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>
+                </span>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id='canvasDiv'></div>
+<div id='canvasDiv2'></div>
+<script type="text/javascript" src="__JS__ichart.1.2.min.js"></script>
+{css href="__CSS__jedate.css"/}
+{js href="__JS__jquery.jedate.js" /}
+<script>
+    $(document).ready(function () {
+        $("#year").val('{$theyear}');
+    });
+    $("#year").jeDate({
+        skinCell:"jedategreen",
+        isinitVal:true,
+        ishmsVal:false,
+        minDate: '1970-06-16 23:59:59',
+        maxDate: $.nowDate(0),
+        format:"YYYY",
+        zIndex:3000,
+    })
+    function showdata() {
+        var year = $("#year").val();
+        window.location.href='{:zw_build_url(\'illegal/chartspie\')}?year='+year;
+    }
+</script>
+<script type="text/javascript">
+    $(function(){
+        var theyear ='{$theyear}';
+        var patrol = ('' === '{$respie[\'patrol\']}') ? 0 : '{$respie[\'patrol\']}';
+        var checkpoints = ('' === '{$respie[\'checkpoints\']}') ? 0 : '{$respie[\'checkpoints\']}';
+        var sidewalkfind = ('' === '{$respie[\'sidewalkfind\']}') ? 0 : '{$respie[\'sidewalkfind\']}';
+        var report = ('' === '{$respie[\'report\']}') ? 0 : '{$respie[\'report\']}';
+        var unit = ('' === '{$respie[\'unit\']}') ? 0 : '{$respie[\'unit\']}';
+        var workfind = ('' === '{$respie[\'workfind\']}') ? 0 : '{$respie[\'workfind\']}';
+        var clue = ('' === '{$respie[\'clue\']}') ? 0 : '{$respie[\'clue\']}';
+        var jan = ('' === '{$rescolumn[\'jan\']}') ? 0 : '{$rescolumn[\'jan\']}';
+        var feb = ('' === '{$rescolumn[\'feb\']}') ? 0 : '{$rescolumn[\'feb\']}';
+        var mar = ('' === '{$rescolumn[\'mar\']}') ? 0 : '{$rescolumn[\'mar\']}';
+        var apr = ('' === '{$rescolumn[\'apr\']}') ? 0 : '{$rescolumn[\'apr\']}';
+        var may = ('' === '{$rescolumn[\'may\']}') ? 0 : '{$rescolumn[\'may\']}';
+        var jun = ('' === '{$rescolumn[\'jun\']}') ? 0 : '{$rescolumn[\'jun\']}';
+        var jul = ('' === '{$rescolumn[\'jul\']}') ? 0 : '{$rescolumn[\'jul\']}';
+        var aug = ('' === '{$rescolumn[\'aug\']}') ? 0 : '{$rescolumn[\'aug\']}';
+        var sep = ('' === '{$rescolumn[\'sep\']}') ? 0 : '{$rescolumn[\'sep\']}';
+        var oct = ('' === '{$rescolumn[\'oct\']}') ? 0 : '{$rescolumn[\'oct\']}';
+        var nov = ('' === '{$rescolumn[\'nov\']}') ? 0 : '{$rescolumn[\'nov\']}';
+        var dec = ('' === '{$rescolumn[\'dec\']}') ? 0 : '{$rescolumn[\'dec\']}';
+
+        var piedata = [
+            {name : '巡逻发现',value : patrol,color:'#4572a7'},
+            {name : '检查岗查获',value : checkpoints,color:'#aa4643'},
+            {name : '路长举报',value : sidewalkfind,color:'#89a54e'},
+            {name : '两翼便道查获',value : report,color:'#80699b'},
+            {name : '外单位移交',value : unit,color:'#00caca'},
+            {name : '工作中发现',value : workfind,color:'#7d7dff'},
+            {name : '获取线索',value : clue,color:'#3d96ae'}
+        ];
+        var columndata = [
+            {name : '1月',value : jan,color:'#89a54e'},
+            {name : '2月',value : feb,color:'#89a54e'},
+            {name : '3月',value : mar,color:'#89a54e'},
+            {name : '4月',value : apr,color:'#89a54e'},
+            {name : '5月',value : may,color:'#89a54e'},
+            {name : '6月',value : jun,color:'#89a54e'},
+            {name : '7月',value : jul,color:'#89a54e'},
+            {name : '8月',value : aug,color:'#89a54e'},
+            {name : '9月',value : sep,color:'#89a54e'},
+            {name : '10月',value : oct,color:'#89a54e'},
+            {name : '11月',value : nov,color:'#89a54e'},
+            {name : '12月',value : dec,color:'#89a54e'}
+        ];
+        var chart = new iChart.Pie2D({
+            render : 'canvasDiv2',
+            data: piedata,
+            title : {
+                text : theyear+'年非法入境查获情况',
+                height:40,
+                fontsize : 20,
+                color : '#282828'
+            },
+            footnote : {
+                color : '#486c8f',
+                fontsize : 12,
+                padding : '0 38'
+            },
+            sub_option : {
+                mini_label_threshold_angle : 40,//迷你label的阀值,单位:角度
+                label : {
+                    background_color:null,
+                    sign:false,//设置禁用label的小图标
+                    padding:'0 4',
+                    border:{
+                        enable:false,
+                        color:'#666666'
+                    },
+                    fontsize:11,
+                    fontweight:600,
+                    color : '#4572a7'
+                },
+                border : {
+                    width : 2,
+                    color : '#ffffff'
+                },
+                listeners:{
+                    parseText:function(d, t){
+                        return d.get('name')+d.get('value')+"批";//自定义label文本
+                    }
+                }
+            },
+            legend:{
+                enable:true,
+                padding:0,
+                offsetx:200,
+                offsety:20,
+                color:'#3e576f',
+                fontsize:15,//文本大小
+                sign_size:15,//小图标大小
+                line_height:28,//设置行高
+                sign_space:5,//小图标与文本间距
+                border:false,
+                align:'left',
+                background_color : null//透明背景
+            },
+            shadow : true,
+            shadow_blur : 6,
+            shadow_color : '#aaaaaa',
+            shadow_offsetx : 0,
+            shadow_offsety : 0,
+//            background_color:'#f1f1f1',
+            align:'right',//右对齐
+            offsetx:-300,//设置向x轴负方向偏移位置60px
+            offset_angle:0,//逆时针偏移120度
+            width : 1000,
+           // height : 400,
+            radius:150
+        });
+        new iChart.Column2D({
+            render : 'canvasDiv',
+            data: columndata,
+            title : theyear+'年各月份非法入境人员统计情况',
+            width : 1000,
+           // height : 400,
+            coordinate:{
+                background_color:'#fefefe',
+                scale:[{
+                    position:'left',
+                    start_scale:0,
+                    end_scale:40,
+//                    scale_space:16,
+                    listeners:{
+                        parseText:function(t,x,y){
+                            return {text:t+"人"}
+                        }
+                    }
+                }]
+            }
+        }).draw();
+        //利用自定义组件构造右侧说明文本
+
+        chart.draw();
+    });
+</script>
+

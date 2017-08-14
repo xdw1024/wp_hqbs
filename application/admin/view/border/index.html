@@ -1,0 +1,39 @@
+<div class="page-title">
+    <div class="title_left">
+        <h3>边管业务管理</h3>
+    </div>
+</div>
+{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css" /}
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><a href="{:zw_build_url('cases/index')}">案件数据管理</a></h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div style="margin:10px;">
+                    <a href="{:zw_build_url('cases/index')}" class="btn btn-success">刑事案件</a>
+                    <a href="{:zw_build_url('cases/administration')}" class="btn btn-success">行政案件</a>
+                    <a href="{:zw_build_url('cases/combat')}" class="btn btn-success">打击处理事件</a>
+                    <a href="{:zw_build_url('cases/collection')}" class="btn btn-success">收缴情况</a>
+                </div>
+            </div>
+            <div class="x_title">
+                <h2><a href="#">非法入境与缉私案件管理</a></h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div style="margin:10px;">
+                    <a href="{:zw_build_url('illegal/index')}" onclick="uploadVideoSftp()" class="btn btn-success">非法入境</a>
+                    <a href="{:zw_build_url('suppress/index')}" onclick="removeFile()" class="btn btn-success">缉私案件</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

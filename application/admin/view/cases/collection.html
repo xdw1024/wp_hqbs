@@ -1,0 +1,419 @@
+<style>
+    .table th {text-align: center}
+    .table td {text-align: center}
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('border/index')}">边管业务管理</a>---案件数据管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="" role="tabpanel" data-example-id="togglable-tabs">
+    <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/index')}" id="home-tab" role="tab" aria-expanded="true">刑事案件</a>
+        </li>
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/administration')}" role="tab" id="profile-tab"  aria-expanded="false">行政案件</a>
+        </li>
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/combat')}" role="tab" id="profile-tab2" aria-expanded="false">打击处理事件</a>
+        </li>
+        <li role="presentation" class="active"><a href="{:zw_build_url('cases/collection')}" role="tab" id="profile-tab3" aria-expanded="false">收缴情况</a>
+        </li>
+    </ul>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn btn-success" href="javascript:;" onclick="addAccount()"><span>添加案件</span></a>
+                <a class="btn btn-success" href="{:zw_build_url('cases/statisticsCollection')}"><span>月度统计</span></a>
+                <a class="btn btn-success" href="{:zw_build_url('cases/cumulativeStatisticsCollection')}"><span>累计统计</span></a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th rowspan="3">序号</th>
+                            <th rowspan="3">单位</th>
+                            <th rowspan="3">案件名称</th>
+                            <th colspan="12">收缴情况</th>
+                            <th rowspan="3">处理时间</th>
+                            <th rowspan="3">创建时间</th>
+                            <th rowspan="3">操作</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">汽车</th>
+                            <th rowspan="2">摩托车</th>
+                            <th rowspan="2">电动车</th>
+                            <th colspan="2">枪支</th>
+                            <th rowspan="2">子弹</th>
+                            <th rowspan="2">炸药（公斤）</th>
+                            <th rowspan="2">雷管</th>
+                            <th colspan="2">毒品（克）</th>
+                            <th rowspan="2">赃款（万元）</th>
+                            <th rowspan="2">赃物折款（万元）</th>
+                        </tr>
+                        <tr>
+                            <th>军用</th>
+                            <th>其他</th>
+                            <th>海洛因</th>
+                            <th>其他</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cases-table">
+                        {volist name="list" id="vo"}
+                        <tr id="{$vo.id}">
+                            <td>{$i}</td>
+                            <td>{$vo.party_org_name}</td>
+                            <td>{$vo.case_name}</td>
+                            <td>{$vo.cs_car}</td>
+                            <td>{$vo.cs_motocycle}</td>
+                            <td>{$vo.cs_electric}</td>
+                            <td>{$vo.cs_gun_military}</td>
+                            <td>{$vo.cs_gun_other}</td>
+                            <td>{$vo.cs_bullet}</td>
+                            <td>{$vo.cs_explosive}</td>
+                            <td>{$vo.cs_detonator}</td>
+                            <td>{$vo.cs_narcotics_heroin}</td>
+                            <td>{$vo.cs_narcotics_other}</td>
+                            <td>{$vo.cs_money}</td>
+                            <td>{$vo.discounts}</td>
+                            <td><?php echo(mb_substr($vo['case_time'],0,16)); ?></td>
+                            <!--<td>{$vo.case_time}</td>-->
+                            <td><?php echo(mb_substr($vo['time'],0,16)); ?></td>
+                            <!--<td>{$vo.time}</td>-->
+                            <td>
+                                <a class="btn btn-success btn-sm" href="javascript:;" onclick="editCollection('{$vo.id}')">修改</a>
+                                <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteCollection('{$vo.id}')">删除</a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination-page" class="pagination_box">{$list->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） 添加 -->
+<div class="modal fade" id="option_admin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="option_user_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加打击处理情况</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">案件名称:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="case_name" name="case_name" placeholder="请输入案件名称" required="required">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">汽车:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_car" name="cs_car" placeholder="请输入收缴汽车数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">摩托车:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_motocycle" name="cs_motocycle" placeholder="请输入收缴摩托车数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">电动车:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_electric" name="cs_electric" placeholder="请输入收缴电动车数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">枪支（军用）:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_gun_military" name="cs_gun_military" placeholder="请输入枪支（军用）数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">枪支（其他）:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_gun_other" name="cs_gun_other" placeholder="请输入枪支（其他）数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">子弹:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_bullet" name="cs_bullet" placeholder="请输入子弹数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">炸药:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_explosive" name="cs_explosive" placeholder="请输入炸药数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">雷管:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_detonator" name="cs_detonator" placeholder="请输入雷管数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">毒品（海洛因）:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_narcotics_heroin" name="cs_narcotics_heroin" placeholder="请输入毒品（海洛因）数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">毒品（其他）:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_narcotics_other" name="cs_narcotics_other" placeholder="请输入毒品（其他）数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">赃款（万元）:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="cs_money" name="cs_money" placeholder="请输入赃款数目">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">赃物折款（万元）:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="discounts" name="discounts" placeholder="请输入赃物折款数目" required="required">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">处理时间:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="case_time" name="case_time" readonly>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <input type="hidden" name="action_status" id="action_status" value="insert">
+                        <input type="hidden" name="case_id" id="case_id">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveCollection()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+{css href="__CSS__jedate.css"/}
+{js href="__JS__multiselect.min.js,__JS__jquery.ajaxupload.js,__JS__jquery.jedate.js,__JS__ckeditor/ckeditor.js" /}
+{load href="__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.excheck.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<script>
+    $(document).ready(function () {
+        $("#filing_time").jeDate(start);
+        $(document).on("click","#case_time",function(){
+            $(this).jeDate(start);
+        });
+
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                var search_info = $(this).val();
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    /**时间控件 start*/
+    var start = {
+        hmsLimit:false,
+        format: 'YYYY-MM-DD hh:mm:ss',
+        skinCell:"jedategreen",
+        maxDate: $.nowDate(0),
+        isinitVal:true,
+        ishmsVal:true
+    };
+    /**时间控件 end*/
+
+    function searchNotice(search_info) {
+        ajaxResult("{:zw_build_url('cases/searchCollection')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, vo) {
+                        var party_org_name = (null === vo.party_org_name) ? '' : vo.party_org_name;
+                        var cs_car = (null === vo.cs_car) ? '' : vo.cs_car;
+                        var cs_motocycle = (null === vo.cs_motocycle) ? '' : vo.cs_motocycle;
+                        var cs_electric = (null === vo.cs_electric) ? '' : vo.cs_electric;
+                        var cs_gun_military = (null === vo.cs_gun_military) ? '' : vo.cs_gun_military;
+                        var cs_gun_other = (null === vo.cs_gun_other) ? '' : vo.cs_gun_other;
+                        var cs_bullet = (null === vo.cs_bullet) ? '' : vo.cs_bullet;
+                        var cs_explosive = (null === vo.cs_explosive) ? '' : vo.cs_explosive;
+                        var cs_detonator = (null === vo.cs_detonator) ? '' : vo.cs_detonator;
+                        var cs_narcotics_heroin = (null === vo.cs_narcotics_heroin) ? '' : vo.cs_narcotics_heroin;
+                        var cs_narcotics_other = (null === vo.cs_narcotics_other) ? '' : vo.cs_narcotics_other;
+                        var cs_money = (null === vo.cs_money) ? '' : vo.cs_money;
+                        html += '<tr id="' + vo.id + '">' +
+                            '         <td scope="row">'+(i+1)+'</td>' +
+                            '         <td>' + party_org_name + '</td>' +
+                            '         <td>' + vo.case_name + '</td>' +
+                            '         <td>' + cs_car + '</td>' +
+                            '         <td>' + cs_motocycle + '</td>' +
+                            '         <td>' + cs_electric + '</td>' +
+                            '         <td>' + cs_gun_military + '</td>' +
+                            '         <td>' + cs_gun_other + '</td>' +
+                            '         <td>' + cs_bullet + '</td>' +
+                            '         <td>' + cs_explosive + '</td>' +
+                            '         <td>' + cs_detonator + '</td>' +
+                            '         <td>' + cs_narcotics_heroin + '</td>' +
+                            '         <td>' + cs_narcotics_other + '</td>' +
+                            '         <td>' + cs_money + '</td>' +
+                            '         <td>' + vo.discounts + '</td>' +
+                            '         <td>' + vo.case_time + '</td>' +
+                            '         <td>' + vo.time + '</td>' +
+                            '         <td>' +
+                            '             <a class="btn btn-success btn-sm" href="javascript:;" onclick="editCollection('+vo.id+')">修改</a>' +
+                            '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteCollection('+vo.id+')">删除</a>' +
+                            '         </td>' +
+                            '    </tr>';
+                    });
+                    console.log(html);
+                    $('#cases-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    console.log('222222');
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+    function addAccount() {
+        $('#case_name').val('');
+        $('#cs_car').val('');
+        $('#cs_motocycle').val('');
+        $('#cs_electric').val('');
+        $('#cs_gun_military').val('');
+        $('#cs_gun_other').val('');
+        $('#cs_bullet').val('');
+        $('#cs_explosive').val('');
+        $('#cs_detonator').val('');
+        $('#cs_narcotics_heroin').val('');
+        $('#cs_narcotics_other').val('');
+        $('#cs_money').val('');
+        $('#discounts').val('');
+        $('#case_time').val('');
+        $('#action_status').val('insert');
+        $('#myModalLabel').text('添加收缴情况');
+        $('#option_admin').modal('show');
+    }
+
+    function saveCollection() {
+        var addr = $('#case_name').val();
+        if(addr == ''){
+            show_notice('请输入信息再提交');
+            return;
+        }
+        var options = {
+            url: '{:zw_build_url("cases/saveCollection")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                console.log(data);
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#option_user_form").ajaxSubmit(options);
+    }
+
+    function editCollection(id) {
+        $.post('{:zw_build_url("cases/editCollection")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                $('#case_name').val(data.data.case_name);
+                $('#cs_car').val(data.data.cs_car);
+                $('#cs_motocycle').val(data.data.cs_motocycle);
+                $('#cs_electric').val(data.data.cs_electric);
+                $('#cs_gun_military').val(data.data.cs_gun_military);
+                $('#cs_gun_other').val(data.data.cs_gun_other);
+                $('#cs_bullet').val(data.data.cs_bullet);
+                $('#cs_explosive').val(data.data.cs_explosive);
+                $('#cs_detonator').val(data.data.cs_detonator);
+                $('#cs_narcotics_heroin').val(data.data.cs_narcotics_heroin);
+                $('#cs_narcotics_other').val(data.data.cs_narcotics_other);
+                $('#cs_money').val(data.data.cs_money);
+                $('#discounts').val(data.data.discounts);
+                $('#case_time').val(data.data.case_time);
+                $('#case_id').val(data.data.id);
+                $('#action_status').val('editor');
+                $('#myModalLabel').text('修改收缴情况');
+                $('#option_admin').modal('show');
+                return true;
+            }else{
+            }
+        });
+    }
+
+    function deleteCollection(id) {
+        $.post('{:zw_build_url("cases/deleteCollection")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+</script>

@@ -1,0 +1,131 @@
+<div class="page-title">
+    <div class="title_left">
+        <h3><a href="__ROUTE__admin/role/index">App角色分配</a> —— <span style="color: red">{$role.role_name}</span></h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                      <button class="btn btn-success" type="button">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn btn-success" href="javascript:;" onclick="addRoleMember()"><span>分配人员</span></a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>用户名</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>可见组织</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="role_members" id="item"}
+                    <tr id="{$item.party_member_id }">
+                        <th>{$i}</th>
+                        <th>{$item.user_name}</th>
+                        <th>{$item.name}</th>
+                        <th>{$item.sex?'男':'女'}</th>
+                        <th>{$item.party_org_name}</th>
+                        <th>
+                            <a href="javascript:;" onclick="deleteRoleMember('{$item.party_member_id}','{$item.role_id}')">删除</a>
+                        </th>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$role_members->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="add_role_members" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="add_role_member_form" class="form-horizontal form-label-left" action="#">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="role_assign_title">添加 <span style="color: red">{$role.role_name}</span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="item form-group">
+                        <label class="col-md-3 col-sm-3 col-xs-12">选择人员:</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select name="party_members[]" multiple="multiple" class="form-control">
+                                {volist name="party_members" id="item"}
+                                <option value="{$item.party_member_id}">{$item.user_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <input type="hidden" name="role_id" value="{$role.role_id}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-success" onclick="saveRoleMemberOption()">提交</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script>
+
+    function addRoleMember() {
+        $('#add_role_members').modal('show');
+    }
+
+    function saveRoleMemberOption() {
+        var options = {
+            url: '{:zw_build_url("role/saveAppRoleMember")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    console.log(data)
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#add_role_member_form").ajaxSubmit(options);
+    }
+
+    function deleteRoleMember(id,role_id) {
+        $.post('{:zw_build_url("role/deleteAppRoleMember")}',{role_id: role_id,party_member_id:id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+
+
+</script>

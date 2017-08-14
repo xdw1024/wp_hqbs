@@ -1,0 +1,145 @@
+<style>
+    .table th {text-align: center}
+    .table td {text-align: center}
+    .datainp { width: 200px; height: 34px; margin-right: 5px; border: 1px #A5D2EC solid; }
+    .wicon { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat: no-repeat; background-position: right center; }
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h2 style="padding-top: 10px;"><a href="{:zw_build_url('illegal/index')}">非法入境信息管理</a>---月度统计</h2>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="row">
+        <div class="x_panel">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="input-group form-horizontal form-label-left search-input-group">
+                <span class="input-group-btn">
+                	<div class="input-group form-horizontal form-label-left search-input-group" style="float: left;margin-right: 10px;">
+		                <input class="form-control datainp wicon " id="year" type="text" placeholder="YYYY-MM" readonly style=" float: right;
+		    width: 120px; border-radius:0; background-color: #fff ">
+		                <span class="input-group-btn">
+		                    <button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>
+		                </span>
+		            </div>
+
+                    <button href="javascript:;" onclick="downdata()" class="btn btn-success" type="submit" style="border-radius:0 ">导出</button>
+                </span>
+                </div>
+                <div class="x_content" style="padding: 0px;">
+                <div class="table-responsive">
+                <table class="table table-hover table-striped table-bordered">
+                    <thead>
+                    <tr><th colspan="40">{$years}年{$months}月防城港{if $org.level<4}边防支队{elseif $org.level==4 /}{$org.party_org_name}{else /}{$org.parentname}{$org.party_org_name}{/if}查获非法入境越南人统计表</th></tr>
+                    <tr>
+                        <th rowspan="2">单位</th>
+                        <th rowspan="2">查获时间</th>
+                        <th rowspan="2">查获地点</th>
+                        <th rowspan="2">查获方式</th>
+                        <th colspan="3">查获人数</th>
+                        <th colspan="5">处理结果</th>
+                        <th rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;备注&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th colspan="4">年龄</th>
+                        <th colspan="4">来源</th>
+                        <th colspan="8">入境目的</th>
+                        <th colspan="3">去向</th>
+                        <th colspan="4">非法入境地段</th>
+                        <th colspan="4">入境时段</th>
+                    </tr>
+                    <tr>
+                        <th>总人数</th>
+                        <th>男</th>
+                        <th>女</th>
+                        {volist name="pro" id="item"}
+                        <th>{$item.process_type_name}</th>
+                        {/volist}
+                        <th>16岁以下</th>
+                        <th>16岁-45岁</th>
+                        <th>45以上</th>
+                        <th>不详</th>
+                        {volist name="sourse" id="item"}
+                        <th>{$item.sourse_name}</th>
+                        {/volist}
+                        {volist name="purpose" id="item"}
+                        <th>{$item.purpose_name}</th>
+                        {/volist}
+                        {volist name="wherego" id="item"}
+                        <th>{$item.wherego_name}</th>
+                        {/volist}
+                        {volist name="place" id="item"}
+                        <th>{$item.entry_place_name}</th>
+                        {/volist}
+                        {volist name="slot" id="item"}
+                        <th>{$item.slotname}</th>
+                        {/volist}
+                    </tr>
+                    </thead>
+                    <tbody id="illegal-table">
+                    {volist name="procount" id="item"}
+                    <tr id="{$item.illegal_id }">
+                        <td>{$item.party_org_name}</td>
+                        <td><?php echo(mb_substr($item['seized_time'],0,16)); ?></td>
+                        <td>{$item.seized_addr}</td>
+                        <td>{$item.seized_name}</td>
+                        <td>{$item.countps}</td>
+                        <td>{$item.male}</td>
+                        <td>{$item.female}</td>
+                        {volist name="pro" id="items"}
+                        <td>{$item[$items.usefield]}</td>
+                        {/volist}
+                        <td><?php if(strlen($item['marks']) > 20){echo(mb_substr($item['marks'],0,20).'...');}else{echo(mb_substr($item['marks'],0,20));} ?></td>
+                        <td>{$item.children}</td>
+                        <td>{$item.juvenile}</td>
+                        <td>{$item.old}</td>
+                        <td>{$item.unknownage}</td>
+                        {volist name="sourse" id="items"}
+                        <td>{$item[$items.usefield]}</td>
+                        {/volist}
+                        {volist name="purpose" id="items"}
+                        <td>{$item[$items.usefield]}</td>
+                        {/volist}
+                        {volist name="wherego" id="items"}
+                        <td>{$item[$items.usefield]}</td>
+                        {/volist}
+                        {volist name="place" id="items"}
+                        <td>{$item[$items.use_field]}</td>
+                        {/volist}
+                        {volist name="slot" id="items"}
+                        <td>{$item[$items.usefield]}</td>
+                        {/volist}
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                </div>
+                <div id="pagination-page" class="pagination_box">{$procount->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{css href="__CSS__jedate.css"/}
+{js href="__JS__jquery.jedate.js" /}
+<script>
+    $(document).ready(function () {
+        $("#year").val('{$theyear}');
+    });
+    $("#year").jeDate({
+        skinCell:"jedategreen",
+        isinitVal:true,
+        ishmsVal:false,
+        minDate: '1970-06-16 23:59:59',
+        maxDate: $.nowDate(0),
+        format:"YYYY-MM",
+        zIndex:3000,
+    })
+    function showdata() {
+        var year = $("#year").val();
+        window.location.href='{:zw_build_url(\'illegal/monthcount\')}?year='+year;
+    }
+    function downdata() {
+        var year = $("#year").val();
+        window.location.href='{:zw_build_url(\'illegal/downmonthcount\')}?year='+year;
+    }
+</script>
+

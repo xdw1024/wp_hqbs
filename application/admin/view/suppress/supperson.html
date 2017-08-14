@@ -1,0 +1,224 @@
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('suppress/index')}">缉私案件管理</a>---缉私涉案人员管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                {if zw_get_user_role_prototype()}{else /}
+                <a class="btn-success btn" href="javascript:;" onclick="addSupPerson()"><span>添加涉案人员</span></a>
+                {/if}
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>手机号</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="supperson-table">
+                    {volist name="person" id="item"}
+                    <tr id="{$item.person_id }">
+                        <td>{$i}</td>
+                        <td>{$item.name}</td>
+                        <td>{if '1'==$item.sex}男{else /}女{/if}</td>
+                        <td>{$item.mobile_num}</td>
+                        <td>
+                            <a class="btn btn-success btn-sm"  href="javascript:;" onclick="editSupPerson('{$item.person_id}')" data-toggle="tooltip" title="修改">修改</a>
+                            <a class="btn btn-sm btn-default" href="javascript:;" onclick="deleteSupperson('{$item.person_id}')">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$person->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） 添加 -->
+<div class="modal fade" id="option_admin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="option_illegal_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">编辑缉私案件涉案人员信息</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="control-label col-md-5 col-sm-5 col-xs-12" for="name">姓名 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-4 col-sm-4 col-xs-12">
+                            <input type="text" id="name" name="name" required="required" class="form-control col-md-12 col-xs-12">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5 col-sm-5 col-xs-12" for="sex">性别 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-4 col-sm-4 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="sex" id="sex">
+                                <option value="1" >男</option>
+                                <option value="0" >女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5 col-sm-5 col-xs-12" for="mobile_num">手机号码 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-4 col-sm-4 col-xs-12">
+                            <input type="number" id="mobile_num" name="mobile_num"  required="required" class="form-control col-md-6 col-xs-12">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <input type="hidden" name="action_status" id="action_status">
+                            <input type="hidden" id="suppress_id" name="suppress_id"/>
+                            <input type="hidden" id="person_id" name="person_id"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveOption()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script>
+    function addSupPerson() {
+        $('#name').val();
+        $('#suppress_id').val('{$sup_id}');
+        $('#mobile_num').val();
+        $('#sex').val();
+        $('#person_id').val();
+        $('#action_status').val('insert');
+        $('#myModalLabel').text('新增缉私案件涉案人员信息');
+        $('#option_admin').modal('show');
+    }
+
+    function editSupPerson(id) {
+        $.post('{:zw_build_url("suppress/editSupPerson")}',{id: id},function (data) {
+            if(data.status === SUCCESS_CODE){
+                $('#party_org_name').val(data.data.party_org_name);$('#name').val(data.data.name);
+                $('#suppress_id').val('{$sup_id}');
+                $('#mobile_num').val(data.data.mobile_num);
+                $('#person_id').val(data.data.person_id);
+                $('#sex').val(data.data.sex);
+                $('#action_status').val('editor');
+                $('#myModalLabel').text('新增缉私案件涉案人员信息');
+                $('#option_admin').modal('show');
+                return true;
+            }else{
+            }
+        });
+    }
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("suppress/saveSupPerson")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    show_notice(data.message);
+                    window.location.href = data.data;
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#option_illegal_form").ajaxSubmit(options);
+    }
+    function deleteSupperson(id) {
+        $.post('{:zw_build_url("suppress/deleteSupPerson")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+    $(document).ready(function(){
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    function searchNotice(search_info) {
+        var sup_id = '{$sup_id}';
+        ajaxResult("{:zw_build_url('suppress/searchsupperson')}" + "?search_info="+ encodeURI(search_info)+"&id="+sup_id);
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var name = (null === item.name) ? '' : item.name;
+                        var sex = ('1' === item.sex) ? '男' : '女';
+                        var mobile = (null === item.mobile_num) ? '' : item.mobile_num;
+                        html += '<tr id="' + item.person_id  + '">' +
+                                '         <td scope="row">'+(i+1)+'</td>' +
+                                '         <td>' + name + '</td>' +
+                                '         <td>' + sex + '</td>' +
+                                '         <td>' + mobile + '</td>' +
+                                '         <td>' +
+                                '             <a class="btn btn-success btn-sm" href="{:zw_build_url(\'suppress/editSupperson\')}?id='+item.person_id+'" data-toggle="tooltip" title="修改">修改</a>' +
+                                '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteSupperson('+item.person_id+')">删除</a>' +
+                                '         </td>' +
+                                '    </tr>';
+
+                    });
+                    $('#supperson-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+</script>

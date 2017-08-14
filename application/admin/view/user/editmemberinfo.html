@@ -1,0 +1,317 @@
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel" id="option_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+            <form method="post" id="set_member_form" class="form-horizontal form-label-left" action="{:zw_build_url('user/save')}">
+                <div class="x_title">
+                    <h2><a href="{:zw_build_url('user/index')}">用户管理</a>---更新用户信息</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="modal-body">
+                    <input hidden id="party_member_id" name="party_member_id" value="{$parid}">
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">用户名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12"  id="user_name" name="user_name" value="{$result.user_name}" placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">头像<span class="required">*</span></label>
+                        <div class="col-md-7 col-sm-7 col-xs-12 profile_left">
+                            <div class="well">
+                                <div id="crop-avatar">
+                                    <img class="img-responsive avatar-view" src="{:zw_build_url('filemanager/getfile')}/id/{$result.face_img_id}" title="头像">
+                                </div>
+                                <div style="margin-top: 15px">
+                                    <div class="btn btn-mini btn-success" id="avatar_uploader">
+                                        上传头像
+                                    </div>
+                                    <span id="avatar_uploading_status" class="collapse" style="display: none;">
+                                                    <i class="aw-loading"></i>
+                                                    文件上传中...
+                                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">姓名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="name" name="name" value="{$result.name}" placeholder="请输入姓名">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">手机号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="mobile_num" name="mobile_num" value="{$result.mobile_num}" placeholder="请输入手机号">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">所属组织:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12" style="position: relative">
+                            <input type="text" id="orgSelect" readonly class="form-control col-md-12 col-xs-12" onclick="showMenu('menuContent');" placeholder="请点击选择组织">
+                            <input type="hidden" name="party_org_id" id="party_org_id" class="form-control col-md-12 col-xs-12">
+                            <div id="menuContent" class="menuContentd" style="display:none;position: absolute; top: 34px;left: 10px; right:10px;z-index:100;background-color: #fff;border:1px solid #ddd;max-height: 350px;overflow-y: auto">
+                                <ul id="treeOrg" class="ztree" style="margin-top:0; width:300px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">可见组织:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12" style="position: relative">
+                            <input type="text" id="viewOrgSelect" readonly class="form-control col-md-12 col-xs-12" onclick="showMenu('viewOrgContent');" placeholder="请点击选择组织">
+                            <input type="hidden" name="view_org_id" id="view_org_id" class="form-control col-md-12 col-xs-12">
+                            <div id="viewOrgContent" class="menuContentd" style="display:none;position: absolute; top: 34px;left: 10px; right:10px;z-index:100;background-color: #fff;border:1px solid #ddd;max-height: 350px;overflow-y: auto">
+                                <ul id="treeViewOrg" class="ztree" style="margin-top:0; width:300px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">所属角色:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="party_role_id" id="party_role_id">
+                                <option value="0" >无</option>
+                                {volist name="party_role" id="type"}
+                                <option value="{$type.role_id}" >{$type.role_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">身份证:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text"  class="form-control col-md-12 col-xs-12" id="identity_card" name="identity_card" value="{$result.identity_card}" placeholder="请输入身份证号">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">性别:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="sex" id="sex">
+                                <option value="1" >男</option>
+                                <option value="0" >女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">工资:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number"  class="form-control col-md-12 col-xs-12" id="salary" name="salary" value="{$result.salary}" placeholder="请输入工资">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">个人积分:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number"  class="form-control col-md-12 col-xs-12" id="personal_integration" name="personal_integration" value="{$result.personal_integration}" placeholder="请输入个人积分">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">党费:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number"  class="form-control col-md-12 col-xs-12" id="party_membership_dues" name="party_membership_dues" value="{$result.party_membership_dues}" placeholder="党费">
+                        </div>
+                    </div>
+                    <!--<div class="item form-group">-->
+                        <!--<label class="control-label col-md-3 col-sm-3 col-xs-12">创建时间:</label>-->
+                        <!--<div class="col-md-7 col-sm-7 col-xs-12">-->
+                            <!--<input type="text" readonly class="form-control col-md-12 col-xs-12" id="create_time" name="create_time" value="{$result.create_time}" placeholder="创建时间">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">支付宝帐号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text"  class="form-control col-md-12 col-xs-12" id="alipay_account" name="alipay_account" value="{$result.alipay_account}" placeholder="请输入支付宝帐号">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">微信帐号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text"  class="form-control col-md-12 col-xs-12" id="weixin_account" name="weixin_account" value="{$result.weixin_account}" placeholder="请输入微信帐号">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">百度频道id:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text"  class="form-control col-md-12 col-xs-12" id="baidu_channel_id" name="baidu_channel_id" value="{$result.baidu_channel_id}" placeholder="请输入百度频道id">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">翼支付帐号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text"  class="form-control col-md-12 col-xs-12" id="best_pay_account" name="best_pay_account" value="{$result.best_pay_account}" placeholder="请输入翼支付帐号">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">生日:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="date"  id="birthday" name="birthday" class="form-control" value="{$result.birthday}" placeholder="请输入生日">
+                        </div>
+
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">排序:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="sort_num" name="sort_num" value="{$result.sort_num}" placeholder="请设置排序">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="hidden" name="face_img_id" id="face_img_id" value="{$result.face_img_id}">
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-6">
+                        <a href="__ROUTE__admin/user/index" class="btn btn-default" data-dismiss="modal">关闭</a>
+                        <a href="javascript:;" onclick="saveOption()" class="btn btn-success">保存</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        var setting = {
+            view: {
+//            dblClickExpand: false,
+                showIcon: false
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                onClick: onClick
+            }
+        };
+
+        var vieworgsetting = {
+            view: {
+//            dblClickExpand: false,
+                showIcon: false
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                onClick: viewOrgOnClick
+            }
+        };
+
+        var zNodes ={$partyname};
+
+        $.fn.zTree.init($("#treeViewOrg"), vieworgsetting, zNodes);
+        $.fn.zTree.init($("#treeOrg"),setting, zNodes);
+        $('#party_org_id').val('{$result.party_org_id}');
+        $('#party_role_id').val('{$result.role_id}');
+        $("#orgSelect").val('{$result.party_org_name}');
+        $("#viewOrgSelect").val('{$result.view_org_name}');
+        $('#sex').val('{$result.sex}');
+    });
+
+    $(function ($) {
+        // Set fieldname
+        $.ajaxUploadSettings.name = 'upload';
+        // Set promptzone
+        $('#avatar_uploader').ajaxUploadPrompt({
+            url : '__ROUTE__admin/fileManager/saveFile',
+            beforeSend : function () {
+                $('#avatar_uploading_status').show();
+            },
+            onprogress : function (e) {
+                if (e.lengthComputable) {
+                    var percentComplete = e.loaded / e.total;
+                    $('#avatar_uploading_status').text('上传中…………' + 100 * percentComplete + '%');
+                }
+            },
+            error : function () {
+                $('#avatar_uploading_status').hide();
+//                show_notice('failed','服务器错误，请文件大小或联系管理员');
+//                $('#progress-bar').removeClass('progress-bar-info').addClass('progress-bar').addClass('progress-bar-danger');
+//                $('.uploadproof').removeClass('disabled').removeAttr('disabled').show();
+//                $('.progress').hide();
+            },
+            success : function (data) {
+                data = $.parseJSON(data);
+                $('#crop-avatar img').attr('src', data.url);
+                $('#face_img_id').val(data.resource_id);
+                $('#avatar_uploading_status').hide();
+            }
+        });
+    });
+
+    function saveOption() {
+        var pid = $('#party_org_id').val();
+        if(pid == null){
+            show_notice('请先选择所属组织');
+            return;
+        }
+        var username = $('#user_name').val();
+        if(username == ''){
+            show_notice('请先填写用户名');
+            return;
+        }
+        var mobilenum = $('#mobile_num').val();
+        if(mobilenum == ''){
+            show_notice('请先填写手机号');
+            return;
+        }
+        var options = {
+            url: '{:zw_build_url("user/savememberinfo")}',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.status === SUCCESS_CODE) {
+                    show_notice(data.message);
+                    window.location.href = data.data;
+                }
+                else {
+                    show_notice(data.message);
+                }
+            },
+            timeout: 6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#set_member_form").ajaxSubmit(options);
+    }
+
+    function onClick(e, treeId, treeNode) {
+        console.log(treeId, treeNode.id, treeNode.name);
+        $("#orgSelect").val(treeNode.name);
+        $("#party_org_id").val(treeNode.id);
+        hideMenu('menuContent');
+    }
+
+    function viewOrgOnClick(e, treeId, treeNode) {
+        console.log('viewOrgOnClick', treeId, treeNode.id, treeNode.name);
+        $("#viewOrgSelect").val(treeNode.name);
+        $("#view_org_id").val(treeNode.id);
+        hideMenu('viewOrgContent');
+    }
+
+    function showMenu(name) {
+        $("#" + name).slideDown("fast");
+        $("body").bind("mousedown", onBodyDown);
+    }
+
+    function hideMenu(name) {
+        $("#" + name).fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+
+    function onBodyDown(event) {
+        if (!(event.target.id === "menuContent" || event.target.id === "viewOrgContent" || $(event.target).parents("#viewOrgContent").length>0  || $(event.target).parents("#menuContent").length>0)) {
+            hideMenu();
+        }
+    }
+
+</script>

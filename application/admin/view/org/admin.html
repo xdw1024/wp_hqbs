@@ -1,0 +1,505 @@
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css" /}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>组织架构管理 </h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <form action="" method="post" id="org_search">
+                <div class="input-group">
+                    <input type="text" id="searchOrgKeywords" class="form-control" placeholder="搜索">
+                    <span class="input-group-btn">
+                      <button class="btn btn-success" type="submit" id="searchLinkUser">搜索</button>
+                </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-2 col-xs-2" style="overflow: hidden; overflow-x: auto; height: 100%; width: 500px;">
+            <div class="x_panel" style="padding: 10px 5px">
+                <div class="x_title">
+                    <a class="btn-success btn" data-toggle="modal" href="#upload_org">上传组织架构</a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="max-height: 900px; overflow: auto">
+                    <div class="zTreeDemoBackground left">
+                        <ul id="orgTree" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-10 col-xs-12" id="org_setting" style="width: calc(100% - 500px); display: none">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>组织设置</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <form class="form-horizontal form-label-left" id="set_org_save">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">组织名称<span class="required">*</span>
+                            </label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <input name="party_org_name" type="text" id="party_org_name" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">组织编码<span class="required">*</span>
+                            </label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <input name="party_org_number" id="party_org_number" class="form-control col-md-7 col-xs-12" type="number">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">组织类型<span class="required">*</span>
+                            </label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <select name="party_type" id="party_type" class="form-control col-md-7 col-xs-12">
+                                    {volist name="org_type" id="item"}
+                                    <option value="{$item.party_type_id}">{$item.party_name}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="hidden" name="party_org_id" id="party_org_id">
+                        </div>
+
+                        <div class="ln_solid"></div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-6">
+                                <a type="submit" class="btn btn-default">返回</a>
+                                <a type="submit" class="btn btn-success" href="javascript:;" onclick="saveOption()">确定</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="upload_org" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="form-horizontal form-label-left" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="javascript:window.location.reload()">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">上传组织</h4>
+                </div>
+                <div class="modal-body" id="upload-modal-body">
+                    <div class="item form-group">
+                        <form  class="dropzone" id="dropzone">
+                        </form>
+                    </div>
+                    <div class="item form-group">
+                        <span>请先下载<a  href="{$Think.config.status_code['web_root']}组织架构导入.csv">组织架构模板文件:</a></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" onclick="javascript:window.location.reload()">关闭</a>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script>
+    /**
+     *  组织架构搜索 Mao 20170427
+     * */
+    $('#org_search').submit(function () {
+        var keywords =$.trim($('#searchOrgKeywords').val());
+        if(keywords == ''){
+            return false;
+        }
+        var zTree = $.fn.zTree.getZTreeObj("orgTree");
+        $.post('{:zw_build_url("org/searchNodes")}', {keywords: keywords}, function (data) {
+            if (SUCCESS_CODE === data.status) {
+                var nodes = data.data;
+                if(nodes.length == 0) {
+                    show_notice('没有搜索到组织', 'failed');
+                    return;
+                }
+                var first_node_org_id = nodes[0].id;
+                var node = zTree.getNodeByParam("id", first_node_org_id, null);    // 获取节点
+                // 如果没有找到该节点，说明该节点未加载到页面上
+                var parent_node_id = null;  // 需要加载子节点的节点ID
+                var parent_node = null;
+                if(node === null) {
+                    var parents = nodes[0].parents;
+                    for(var j = 0; j < parents.length; j++) {
+                        parent_node_id = parents[j];
+                        parent_node = zTree.getNodeByParam("id", parent_node_id, null);    // 获取节点
+                        if(parent_node == null) {
+                            continue;
+                        }else{
+                            break;
+                        }
+                    }
+                    $.post('getChildNodes', {node_id:parent_node_id, level:nodes[0].level}, function (data) {
+                        if (SUCCESS_CODE === data.status) {
+                            var child_nodes = data.data;
+                            // 加载子节点
+                            zTree.addNodes(parent_node,0, child_nodes,false);
+                            //
+                            focusNode(first_node_org_id);
+                        }
+                    })
+                }else{
+                    focusNode(first_node_org_id);
+                }
+                // 加载该节点的子节点
+                //console.log(nodes[0])
+
+                for(var i = 0; i < nodes.length; i++) {
+
+                }
+            }
+        });
+        /*var org_id = null;
+         // 按名称寻找节点
+         for(var i = 0; i < zNodes.length; i++) {
+         if(zNodes[i].name.indexOf(keywords) != -1) {
+         //console.log(zNodes[i].name);
+         var org_id = zNodes[i].id;
+         // 如果关键词与节点名称一致，则停止搜索，否则继续搜索
+         if(keywords == zNodes[i].name) {
+         break;
+         }
+         }
+         }
+         // 如果找到了节点
+         if(org_id != null) {
+         var node = zTree.getNodeByParam("id", org_id, null);    // 获取节点
+         // 如果该节点的父节点没有展开，即该节点没有显示出来，需要先把该节点的父节点依次展开
+         if(node.getParentNode() != undefined && node.getParentNode().open === false){
+         var nodes_need_open = new Array;
+         var pnode = node.getParentNode();
+         // 遍历其父节点
+         while(pnode.open ===false){
+         nodes_need_open.push(pnode);
+         pnode = pnode.getParentNode();
+         }
+         // 依次展开父节点
+         for(var j = nodes_need_open.length -1; j >=0 ; j--){
+         zTree.expandNode(nodes_need_open[j], true, false, false);
+         }
+         }
+         // 如果该节点还有子节点，则展开之
+         if(node.isParent === true) {
+         zTree.expandNode(node, true, false, false);
+         }
+         $('#'+node.tId+'_span').trigger('click');   // 打开组织设置
+         }else{
+         // 搜索不到
+         show_notice('没有找到组织', 'failed');
+         }*/
+        return false;
+    });
+
+    function focusNode(org_id) {
+        var zTree = $.fn.zTree.getZTreeObj("orgTree");
+        var node = zTree.getNodeByParam("id", org_id, null);    // 获取节点
+        // 如果该节点的父节点没有展开，即该节点没有显示出来，需要先把该节点的父节点依次展开
+        if(node.getParentNode() != undefined && node.getParentNode().open === false){
+            var nodes_need_open = new Array;
+            var pnode = node.getParentNode();
+            // 遍历其父节点
+            while(pnode.open ===false){
+                nodes_need_open.push(pnode);
+                pnode = pnode.getParentNode();
+            }
+            // 依次展开父节点
+            for(var j = nodes_need_open.length -1; j >=0 ; j--){
+                zTree.expandNode(nodes_need_open[j], true, false, false);
+            }
+        }
+        // 如果该节点还有子节点，则展开之
+        if(node.isParent === true) {
+            zTree.expandNode(node, true, false, false);
+        }
+        $('#'+node.tId+'_span').trigger('click');   // 打开组织设置
+    }
+    function searchLinkUserKey() {
+
+        var key = $.trim($('#searchLinkUserKey').val());
+        var type= $('#searchType').val();
+        userId.forEach(function (val,i,arr) {
+            var id=  (type == 'name' ? '#name_' : '#full_')+val;
+            if ($(id).text().indexOf(key)<0){
+                $('#tr_'+val).hide();
+            }else{
+                $('#tr_'+val).show();
+            }
+
+        });
+
+    }
+
+    var setting = {
+        view: {
+            addHoverDom: addHoverDom,
+            removeHoverDom: removeHoverDom,
+            selectedMulti: false,
+            showIcon: false
+        },
+        edit: {
+            enable: true,
+            editNameSelectAll: true,
+            showRenameBtn: true,
+            showRemoveBtn: showRemoveBtn
+        },
+        data: {
+            simpleData: {
+                enable: true
+            },
+            keep: {
+                parent: true
+            }
+        },
+        callback: {
+            beforeDrag      : beforeDrag,
+            beforeEditName  : beforeEditName,
+            beforeRemove    : beforeRemove,
+            beforeRename    : beforeRename,
+            beforeClick     : beforeClick,
+            onClick         : onClick,
+            beforeExpand    : beforeExpand
+        }
+    };
+
+    var zNodes = {$org};
+
+    function beforeDrag(treeId, treeNodes) {
+        return false;
+    }
+
+    // 展开节点触发 Mao 20170427
+    function beforeExpand(treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("orgTree");
+        var node_id = treeNode.id;
+        if(treeNode.children != undefined){
+            return;
+        }
+        // 先清空子节点
+        zTree.removeChildNodes(treeNode);
+        // 获取子节点
+        $.post('{:zw_build_url("org/getChildNodes")}', {node_id: node_id}, function (data) {
+            if (SUCCESS_CODE === data.status) {
+                var nodes = data.data;
+                // 再加载子节点
+                zTree.addNodes(treeNode,0, nodes,false);
+            }
+        })
+    }
+
+    function beforeEditName(treeId, treeNode) {
+        console.log('beforeEditName');
+        var zTree = $.fn.zTree.getZTreeObj("orgTree");
+        zTree.selectNode(treeNode);
+        setTimeout(function() {
+            if (confirm("进入节点 -- " + treeNode.name + " 的编辑状态吗？")) {
+                setTimeout(function() {
+                    zTree.editName(treeNode);
+                }, 0);
+            }
+        }, 0);
+        return false;
+    }
+
+    function beforeRemove(treeId, treeNode) {
+        if (confirm("确认删除 节点 -- " + treeNode.name + " 吗？"))
+        {
+            var zTree = $.fn.zTree.getZTreeObj("orgTree");
+            zTree.selectNode(treeNode);
+
+            $.post('{:zw_build_url("org/deleteNode")}',{treeNodeId: treeNode.id},function(result){
+                if (SUCCESS_CODE === result.status)
+                {
+                    location.reload();
+                }
+                else
+                {
+                    alert('删除失败');
+                }
+            });
+            return true;
+        }
+        location.reload();
+    }
+
+    function beforeRename(treeId, treeNode, newName, isCancel) {
+        console.log('onRemove');
+        if (newName.length === 0) {
+            setTimeout(function() {
+                var zTree = $.fn.zTree.getZTreeObj("orgTree");
+                zTree.cancelEditName();
+                alert("节点名称不能为空.");
+            }, 0);
+            return true;
+        }
+
+        $.post('{:zw_build_url("org/renameNode")}',{treeNodeId: treeNode.id, treeNodeName: newName},function(result){
+            if (SUCCESS_CODE === result.status)
+            {
+                location.reload();
+            }
+            else
+            {
+                alert('重命名失败');
+            }
+        });
+
+        return true;
+    }
+
+    function addHoverDom(treeId, treeNode) {
+        addBtn(treeId, treeNode);
+    }
+
+    // 添加节点
+    function addBtn(treeId, treeNode)
+    {
+        var sObj = $("#" + treeNode.tId + "_span");
+
+        if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length> 0) return;
+
+        var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
+            + "' title='添加单位' onfocus='this.blur();'></span>";
+        sObj.after(addStr);
+
+        var btn = $("#addBtn_"+treeNode.tId);
+        if (btn) btn.bind("click", function(){
+            var zTree = $.fn.zTree.getZTreeObj("orgTree");
+            var newName = prompt("添加新栏目","新栏目");
+            if (newName !== null && newName !== '')
+            {
+                $.post('{:zw_build_url("org/insertNode")}',{treeNodeId: treeNode.id, treeNodeName: newName, pos: 'down'},function(result){
+                    console.log(result, SUCCESS_CODE);
+                    if (SUCCESS_CODE === result.status)
+                    {
+                        location.reload();
+                    }
+                    else
+                    {
+                        alert('添加失败');
+                    }
+                });
+            }
+            return false;
+        });
+    }
+
+    function showRemoveBtn(treeId, treeNode) {
+//            console.log(treeNode.level);
+        return treeNode.level > 0;
+    }
+
+    function beforeClick(treeId, treeNode, clickFlag) {   //click为true时不执行，默认为执行
+//            console.log(treeId, treeNode, clickFlag, (treeNode.click !== false));
+        return (treeNode.click !== false);
+    }
+
+    function onClick(event, treeId, treeNode, clickFlag) {
+        $.post('{:zw_build_url("org/getOrg")}',{org_id: treeNode.id},function (data) {
+            if(data.status === SUCCESS_CODE){
+                $('#org_setting').show();
+                $('#party_org_name').val(data.data.party_org_name);
+//                $('#pay_sign').val(data.data.pay_sign);
+                $('#party_type').val(data.data.party_type_id);
+//                $('#org_address').val(data.data.address_id);
+                $('#party_org_id').val(data.data.party_org_id);
+//                $('#rank').val(data.data.rank);
+                $('#party_org_number').val(data.data.party_org_number);
+            }
+            else
+            {
+                show_notice(data.message)
+            }
+        });
+    }
+
+    function removeHoverDom(treeId, treeNode) {
+//            console.log('removeHoverDom');
+        $("#addBtn_"+treeNode.tId).unbind().remove();
+    }
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#orgTree"), setting, zNodes);
+    });
+
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("org/saveOrgAttribute")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    show_notice(data.message)
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#set_org_save").ajaxSubmit(options);
+    }
+
+    Dropzone.autoDiscover = false;
+    $("#dropzone").dropzone({
+        url: "{:zw_build_url('org/saveFile')}",//上传地址
+        maxFiles: 1,//一次性上传的文件数量上限
+        acceptedFiles: ".csv",
+
+        dictDefaultMessage: "请先下载格式文件，填好之后将文件拖拽至此区域上传",
+        dictMaxFilesExceeded: "您一次最多只能上传{{maxFiles}}个文件",
+        dictInvalidFileType: "你不能上传该类型文件,文件类型只能是*.csv。",
+        uploadMultiple: false,
+        success: function(file,data) {
+            console.log(data);
+            if (data.status === SUCCESS_CODE)
+            {
+                var html = '<table class="table table-hover table-striped">' +
+                    '                    <thead>' +
+                    '                    <tr>' +
+                    '                    <th>序号</th>' +
+                    '                    <th>编号</th>' +
+                    '                    <th>名称</th>' +
+                    '                    <th>状态</th>' +
+                    '                    </tr>' +
+                    '                    </thead>' +
+                    '                    <tbody id="posts-table">';
+                $.each(data.data, function (i, item) {
+                    html += ' <tr">' +
+                        ' <td>'+ i+'</td>' +
+                        ' <td>'+ item.code+'</td>' +
+                        ' <td>'+ item.name+'</td>' +
+                        ' <td>'+ item.message+'</td>' +
+                        '  </tr>';
+                });
+
+                html +='            </tbody>' +
+                    '            </table>';
+                $('#upload-modal-body').empty().append(html);
+            }
+        }
+    });
+</script>

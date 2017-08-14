@@ -1,0 +1,103 @@
+{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css,__JS__ckeditor/ckeditor.js" /}
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><a href="{:zw_build_url('suppress/supvehile')}?id={$vehicle['suppress_id']}">缉私案件涉案车辆管理</a>---新增缉私案件涉案车辆信息</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+                <div class="col-md-12 col-sm-12 col-xs-12 red" id="tips">
+                    <span></span>
+                </div>
+                <br />
+                <form method="post" id="set_supp_form" class="form-horizontal form-label-left" action="#">
+                    <div class="col-md-9 col-sm-9 col-xs-12">
+                        <div class="x_content">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-6 col-xs-12" for="license_plate">车牌 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <input type="text" id="license_plate" name="license_plate" required="required" class="form-control col-md-12 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-6 col-xs-12" for="vehicle_model">型号 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <input type="text" id="vehicle_model" name="vehicle_model"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-6 col-xs-12" for="storage_location">存放地点 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <input type="text" id="storage_location" name="storage_location"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-6 col-xs-12" for="tranferstatus">移交情况 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="tranferstatus" id="tranferstatus">
+                                        <option value="0" >未移交</option>
+                                        <option value="1" >已移交</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <input type="hidden" id="suppress_id" name="suppress_id"/>
+                                    <input type="hidden" id="vehicle_id" name="vehicle_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 group_center">
+                            <a href="{:zw_build_url('suppress/supvehicle')}?id={$vehicle['suppress_id']}" class="btn btn-default">取消</a>
+                            <a href="javascript:;" onclick="saveOption()" class="btn btn-success">保存</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#license_plate").val('{$vehicle[\'license_plate\']}');
+        $("#vehicle_model").val('{$vehicle[\'vehicle_model\']}');
+        $("#storage_location").val('{$vehicle[\'storage_location\']}');
+        $("#tranferstatus").val('{$vehicle[\'tranferstatus\']}');
+        $("#suppress_id").val('{$vehicle[\'suppress_id\']}');
+        $("#vehicle_id").val('{$vehicle[\'vehicle_id\']}');
+
+    });
+
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("suppress/saveSupvehicle")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    show_notice(data.message);
+                    window.location.href = data.data;
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#set_supp_form").ajaxSubmit(options);
+    }
+
+</script>

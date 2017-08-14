@@ -1,0 +1,152 @@
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel" id="option_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+            <form method="post" id="edit_member_form" class="form-horizontal form-label-left" action="#">
+                <div class="x_title">
+                    <h2>更新用户信息</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="modal-body">
+                    <input hidden id="party_member_id" name="party_member_id" value="{$parid}">
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">用户名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="user_name" name="user_name" value="{$result.user_name}" placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">头像<span class="required">*</span></label>
+                        <div class="col-md-7 col-sm-7 col-xs-12 profile_left">
+                            <div class="well">
+                                <div id="crop-avatar">
+                                    <img class="img-responsive avatar-view" src="{:zw_build_url('filemanager/getfile')}/id/{$result.face_img_id}" title="头像">
+                                </div>
+                                <div style="margin-top: 15px">
+                                    <div class="btn btn-mini btn-success" id="avatar_uploader">
+                                        上传头像
+                                    </div>
+                                    <span id="avatar_uploading_status" class="collapse" style="display: none;">
+                                                    <i class="aw-loading"></i>
+                                                    文件上传中...
+                                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">姓名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="name" name="name" value="{$result.name}" placeholder="请输入姓名">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">性别:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="sex" id="sex">
+                                <option value="1" >男</option>
+                                <option value="0" >女</option>
+                            </select>
+                            </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">所属组织:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="party_org_id" id="party_org_id">
+                                <!--<option value="">请设置可见组织</option>-->
+                                {volist name="partyname" id="type"}
+                                <option value="{$type.party_org_id}" >{$type.party_org_name}</option>
+                                {/volist}
+                            </select>
+                             </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">手机号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="mobile_num" name="mobile_num" value="{$result.mobile_num}" placeholder="请输入手机号">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">生日:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="date"  id="birthday" name="birthday" value="{$result.birthday}" placeholder="请输入生日">
+                        </div>
+
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">排序:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="sort_num" name="sort_num" value="{$result.sort_num}" placeholder="请设置排序">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="hidden" name="face_img_id" id="face_img_id" value="{$result.face_img_id}">
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-6">
+                        <a href="__ROUTE__admin/user/index" class="btn btn-default" data-dismiss="modal">关闭</a>
+                        <a href="javascript:;" onclick="saveOption()" class="btn btn-success">保存</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#party_org_id').val('{$result.party_org_id}');
+        $('#sex').val('{$result.sex}');
+    });
+    $(function ($) {
+        // Set fieldname
+        $.ajaxUploadSettings.name = 'upload';
+        // Set promptzone
+        $('#avatar_uploader').ajaxUploadPrompt({
+            url : '__ROUTE__admin/fileManager/saveFile',
+            beforeSend : function () {
+                $('#avatar_uploading_status').show();
+            },
+            onprogress : function (e) {
+                if (e.lengthComputable) {
+                    var percentComplete = e.loaded / e.total;
+                    $('#avatar_uploading_status').text('上传中…………' + 100 * percentComplete + '%');
+                }
+            },
+            error : function () {
+                $('#avatar_uploading_status').hide();
+//                show_notice('failed','服务器错误，请文件大小或联系管理员');
+//                $('#progress-bar').removeClass('progress-bar-info').addClass('progress-bar').addClass('progress-bar-danger');
+//                $('.uploadproof').removeClass('disabled').removeAttr('disabled').show();
+//                $('.progress').hide();
+            },
+            success : function (data) {
+                data = $.parseJSON(data);
+                $('#crop-avatar img').attr('src', data.url);
+                $('#face_img_id').val(data.resource_id);
+                $('#avatar_uploading_status').hide();
+            }
+        });
+    });
+
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("user/save")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    window.location.href = data.data;
+                }
+                else
+                {
+                    console.log(data)
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#edit_member_form").ajaxSubmit(options);
+    }
+</script>

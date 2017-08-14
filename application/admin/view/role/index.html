@@ -1,0 +1,246 @@
+<div class="page-title">
+    <div class="title_left">
+        <h3>用户角色管理</h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn-success btn" href="javascript:;" onclick="addRole()"><span>添加角色</span></a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>角色名称</th>
+                        <th>描述</th>
+                        <th>状态</th>
+                        <th>类型</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="role-table">
+                    {volist name="roles" id="item"}
+                    <tr id="{$item.role_id }">
+                        <td>{$i}</td>
+                        <td>{$item.role_name}</td>
+                        <td>{$item.role_description}</td>
+                        <td>{eq name="$item.role_status" value="1"}启用{else/}禁用{/eq}</td>
+                        <td>{$item.party_role_type_name}</td>
+                        <td>
+                            <a class="btn btn-sm btn-success" href="javascript:;" onclick="editRole('{$item.role_id}')">修改</a>
+                            <a class="btn btn-sm btn-default" href="javascript:;" onclick="deleteRole('{$item.role_id}')">删除</a>
+                            <!--<a class="btn btn-sm btn-success" href="__ROUTE__admin/role/assignAppRole?id={$item.role_id}">角色分配</a>-->
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$roles->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="option_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="create_role_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="role_change">添加用户角色</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">名称:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="role_name" name="role_name" placeholder="请输入角名">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">角色类型:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="party_role_type" id="party_role_type">
+                                {volist name="party_role_type" id="item"}
+                                <option value="{$item.party_role_type_id}">{$item.party_role_type_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">描述:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="description" name="description" placeholder="请输入描述">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">状态:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="role_status" id="role_status">
+                                <option value="1">启用</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">排序:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="sort_num" name="sort_num" placeholder="请设置排序">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <input type="hidden" name="action_status" id="action_status" value="insert">
+                        <input type="hidden" name="role_id" id="role_id">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">关闭</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveOption()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script>
+    function deleteRole(id) {
+        $.post('{:zw_build_url("role/deleteAppRole")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+
+    function addRole() {
+        $('#role_name').val('');
+        $('#description').val('');
+        $('#sort_num').val('');
+        $('#role_id').val('');
+        $('#role_status').val('1');
+        $('#party_role_type').val('');
+        $('#role_change').text('添加用户角色');
+        $('#action_status').val('insert');
+        $('#option_role').modal('show');
+    }
+
+    function editRole(id) {
+        $.post('{:zw_build_url("role/editAppRole")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                $('#role_name').val(data.data.role_name);
+                $('#description').val(data.data.role_description);
+                $('#sort_num').val(data.data.sort_num);
+                $('#role_id').val(data.data.role_id);
+                $('#role_status').val(data.data.role_status);
+                $('#party_role_type').val(data.data.party_role_type_id);
+                $('#role_change').text('修改用户角色');
+                $('#action_status').val('editor');
+                $('#option_role').modal('show');
+                return true;
+            }else{
+            }
+        });
+    }
+
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("role/saveAppRole")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    console.log(data)
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#create_role_form").ajaxSubmit(options);
+    }
+
+    $(document).ready(function(){
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    function searchNotice(search_info) {
+//        ajaxResult('__ROUTE__leave/user/searchUser?search_info='+search_info);
+        ajaxResult("{:zw_build_url('role/searchrole')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var role_status = (1 === item.role_status) ? '启用' : '禁用';
+                        html += '<tr id="' + item.role_id  + '">' +
+                                '         <td scope="row">'+(i+1)+'</td>' +
+                                '         <td>' + item.role_name + '</td>' +
+                                '         <td>' + item.role_description + '</td>' +
+                                '         <td>' + role_status + '</td>' +
+                                '         <td>' + item.party_role_type_name + '</td>' +
+                                '         <td>' +
+                                '             <a class="btn btn-success btn-sm" href="javascript:;" onclick="editRole('+item.role_id+')">修改</a>' +
+                                '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteRole('+item.role_id+')">删除</a>' +
+//                                '             <a class="btn btn-sm btn-success" href="__ROUTE__admin/role/assignAppRole?id='+item.role_id+'">角色分配</a>' +
+                                '         </td>' +
+                                '    </tr>';
+                    });
+                    $('#role-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+
+</script>

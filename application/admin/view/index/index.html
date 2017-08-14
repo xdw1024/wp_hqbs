@@ -1,0 +1,136 @@
+<!--<div class="page-title">-->
+    <!--<div class="title_left">-->
+        <!--<h3></h3>-->
+    <!--</div>-->
+    <!--<div class="title_right">-->
+        <!--<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">-->
+            <!--<div class="input-group">-->
+                <!--<input type="text" class="form-control" placeholder="请输入搜索内容">-->
+                <!--<span class="input-group-btn">-->
+                      <!--<button class="btn btn-success" type="button">搜索</button>-->
+                    <!--</span>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css" /}-->
+<!--<div class="clearfix"></div>-->
+
+<!--<div class="row">-->
+    <!--<div class="col-md-12 col-sm-12 col-xs-12">-->
+        <!--<div class="x_panel">-->
+            <!--<div class="x_title">-->
+                <!--<h2>用户管理</h2>-->
+                <!--<div class="clearfix"></div>-->
+            <!--</div>-->
+            <!--<div class="x_content">-->
+                <!--<table class="table table-hover table-bordered">-->
+                    <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>序号</th>-->
+                        <!--<th>昵称</th>-->
+                        <!--<th>手机号</th>-->
+                        <!--<th>注册时间</th>-->
+                        <!--<th>上次登陆时间</th>-->
+                        <!--<th>登陆次数</th>-->
+                        <!--<th>操作</th>-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                    <!--<tbody>-->
+                    <!--{for start="1" end="5"}-->
+                    <!--<tr>-->
+                        <!--<th scope="row">{$i}</th>-->
+                        <!--<td>张三</td>-->
+                        <!--<td>138{:rand(10000000, 100000000)}</td>-->
+                        <!--<td>{:date('Y/m/d h:i:s', rand(time()-10000000, time()-1000000))}</td>-->
+                        <!--<td>{:date('Y/m/d h:i:s', rand(time()-1000000, time()))}</td>-->
+                        <!--<td>{:rand(1, 100000)}</td>-->
+                        <!--<td>删除</td>-->
+                    <!--</tr>-->
+                    <!--{/for}-->
+                    <!--</tbody>-->
+                <!--</table>-->
+                <!--<form  class="dropzone" id="dropzone">-->
+                <!--</form>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<input id="video_id" type="hidden">-->
+<!--<a href="Javascript:" onclick="uploadVideoSftp()" class="btn btn-success">传输到流媒体服务器</a>-->
+<!--<a href="Javascript:" onclick="removeFile()" class="btn btn-success">删除文件</a>-->
+<!--<a href="Javascript:" onclick="playVideo()" class="btn btn-success">预览</a>-->
+
+<!--{load href="__JS__video.min.js,__JS__videojs-ie8.min.js,__CSS__video-js.min.css" /}-->
+
+<!--&lt;!&ndash; 模态框（Modal） &ndash;&gt;-->
+<!--<div class="modal fade" id="playVideo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">-->
+    <!--<div class="modal-dialog" style="width: 1000px; height: auto; text-align: center">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                <!--<h4 class="modal-title" id="myModalLabel">预览视频</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body">-->
+                <!--<video id="example_video" class="video-js vjs-default-skin" controls preload="none" style="width: 100%; height: 600px" poster="http://localhost/wisdompb/public/upload/20170425/acde09030fa83c45da1f85709272c1d1.png">-->
+                    <!--<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that-->
+                        <!--<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>-->
+                    <!--</p>-->
+                <!--</video>-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal">返回</a>-->
+            <!--</div>-->
+        <!--</div>&lt;!&ndash; /.modal-content &ndash;&gt;-->
+    <!--</div>&lt;!&ndash; /.modal &ndash;&gt;-->
+<!--</div>-->
+
+<!--<script>-->
+    <!--Dropzone.autoDiscover = false;-->
+    <!--$("#dropzone").dropzone({-->
+        <!--url: '__ROUTE__admin/fileManager/saveVideoFile',//上传地址-->
+        <!--dictDefaultMessage: "将文件拖拽至此区域",-->
+        <!--addRemoveLinks: true,//添加移除文件-->
+        <!--dictRemoveFile: "移除文件",-->
+        <!--success:function (data, message) {-->
+            <!--console.log(message);-->
+            <!--$("#video_id").val(message.data.video_id);-->
+            <!--$("#example_video").attr('src', message.data.video_url);-->
+
+        <!--}-->
+    <!--});-->
+
+    <!--function uploadVideoSftp() {-->
+        <!--$.post('{:zw_build_url("Filemanager/approveVideo")}',{id: $('#video_id').val()},function(result){-->
+            <!--console.log(result);-->
+            <!--if (SUCCESS_CODE === result.status)-->
+            <!--{-->
+                <!--console.log(result);-->
+            <!--}-->
+            <!--else-->
+            <!--{-->
+                <!--alert('传输失败');-->
+            <!--}-->
+        <!--});-->
+    <!--}-->
+
+    <!--function playVideo() {-->
+        <!--$('#playVideo').modal('show');-->
+    <!--}-->
+
+    <!--function removeFile() {-->
+        <!--$.post('{:zw_build_url("Filemanager/removeFile")}',{id: $('#video_id').val(), type:'video'},function(result){-->
+            <!--console.log(result);-->
+            <!--if (SUCCESS_CODE === result.status)-->
+            <!--{-->
+                <!--console.log(result);-->
+            <!--}-->
+            <!--else-->
+            <!--{-->
+                <!--alert('删除失败');-->
+            <!--}-->
+        <!--});-->
+    <!--}-->
+
+<!--</script>-->

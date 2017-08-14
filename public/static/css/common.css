@@ -1,0 +1,27 @@
+html,body{padding: 0px; margin: 0px;width: 100%; height: 100%;background-color: #fff;font-family: "microsoft yahei";}
+
+.file-banner {width: 100%; height: 100%;padding: 0px 20px 20px 5px;background-color: #f7f7f7;}
+.file-banner .file-blog {box-shadow: 1px 3px 3px #999;position: relative;cursor: pointer;height: 175px;width: 150px; float:left; border: 1px solid #ddd;padding: 10px; margin-left: 15px;margin-top: 20px;box-sizing: border-box;background-color: #f4f6fa;}
+.file-banner .file-blog .img-container {width: 100%; height: 120px;line-height: 120px;text-align: center;padding: 0px 5px;}
+.file-banner .file-blog .img-container img {height: 100%;}
+.file-banner .file-blog .img-container .file-icon {font-size: 90px;color: #a2b2c0;}
+
+.file-banner .file-blog.type-images {background-image: url(../images/images-bg.png);background-repeat: no-repeat; background-size: contain;}
+.file-banner .file-blog.type-images img{box-shadow: 1px 3px 6px #999;}
+
+.file-banner .file-blog.type-video {background-color: #555;padding: 0px;background-image: url(../images/video-bg.png) ;background-repeat: no-repeat;     background-size: contain;}
+.file-banner .file-blog.type-video .img-container { padding: 0px;height: 140px; line-height: 140px;}
+.file-banner .file-blog.type-video .img-container img {border-bottom: 1px solid #777;}
+.file-banner .file-blog.type-video .play-icon {font-size: 30px;  color:rgba(255,255,255,0.7);position: absolute;bottom: -2px;text-align: right;right: 10px;}
+
+.file-banner .file-blog .file-name {position: absolute;left: 0px;right: 0px;bottom:-10px;color: #777;padding: 0px 3px;text-align: center; overflow: hidden; text-overflow: ellipsis;white-space: nowrap;margin-top: 5px;background-color: #fff;height: 30px;line-height: 30px;border-top: 1px solid #ddd;}
+
+.hover_mask {background-color: rgba(0,0,0,0.7);opacity: 0; transition: all 0.4s ease-in-out; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 10;padding: 1em;}
+.hover_mask p,.hover_mask p span {color: #71ecdd; font-weight: bold;margin: 0px;font-size: 14px;}
+.hover_mask .file_type,.hover_mask .file_info {font-weight: 100; color: #fff;font-size: 12px;}
+.hover_mask p{ transform: translateY(100px); opacity: 0; transition: all 0.2s linear;}
+.hover_mask .file_info{ transform: translateY(-100px); opacity: 0; transition: all 0.3s linear;}
+.hover_mask .title {border-top:1px solid #fff; margin-top: 3px; padding-top: 3px;}
+.file-blog:hover .hover_mask{opacity: 1;}
+.file-blog:hover .hover_mask p{transform: translateY(0px);opacity: 1;}
+

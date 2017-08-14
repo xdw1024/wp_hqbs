@@ -1,0 +1,268 @@
+<style>
+    .table th {text-align: center}
+    .table td {text-align: center}
+    .datainp { width: 200px; height: 34px;}
+    .wicon { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat: no-repeat; background-position: right center; }
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('cases/Collection')}">案件数据管理</a>---月度统计</h2>
+    </div>
+    <!--<div class="title_right">-->
+        <!--<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">-->
+            <!--<div class="input-group form-horizontal form-label-left search-input-group">-->
+                <!--<input class="form-control datainp wicon " id="year" type="text" placeholder="YYYY-MM" readonly style=" float: right;-->
+    <!--width: 120px; border-radius:0; background-color: #fff ">-->
+                <!--<span class="input-group-btn">-->
+                    <!--<button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>-->
+                <!--</span>-->
+            <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <span class="input-group-btn">
+                	<div class="input-group form-horizontal form-label-left search-input-group" style="float: left;margin-right: 10px;">
+		                <input class="form-control datainp wicon " id="year" type="text" placeholder="YYYY-MM" readonly style=" float: right;
+		    width: 120px; border-radius:0; background-color: #fff ">
+		                <span class="input-group-btn">
+		                    <button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>
+		                </span>
+		            </div>
+                    <button href="javascript:;" onclick="downdata()" class="btn btn-success" type="submit" style="border-radius:0 ">导出</button>
+                </span>
+            </div>
+            <div class="x_content" style="padding: 0px;">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered" id="ta">
+                        <thead>
+                        <tr>
+                            <th colspan="14" id="tbname">{$time['year']}年{$month}月防城港{if condition="($org.type == 'place')"}{$org.p_organization}{$org.organization}{elseif condition="($org.type == 'bridge')"/}{$org.organization}{else /}支队{/if}打击处理情况统计表</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="3" colspan="2">单位/类别</th>
+                            <th colspan="12">{$month}月情况</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">汽车</th>
+                            <th rowspan="2">摩托车</th>
+                            <th rowspan="2">电动车</th>
+                            <th colspan="2">枪支</th>
+                            <th rowspan="2">子弹</th>
+                            <th rowspan="2">炸药（公斤）</th>
+                            <th rowspan="2">雷管</th>
+                            <th colspan="2">毒品（克）</th>
+                            <th rowspan="2">赃款（万元）</th>
+                            <th rowspan="2">赃物折款（万元）</th>
+                        </tr>
+                        <tr>
+                            <th>军用</th>
+                            <th>其他</th>
+                            <th>海洛因</th>
+                            <th>其他</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cases-table">
+                        {volist name="list" id="vo"}
+                        {if condition="($vo.type == 'bridge')"}
+                        <tr>
+                            <td rowspan="{$vo.s_count}">{$vo.name}</td>
+                            {volist name="vo.s_data" id="temp" key="k"}
+                            {if condition="($k != 1)"}<tr>{/if}
+                            {volist name="temp" id="v"}
+                            <td>{$v.party_org_name}</td>
+                            <td>{$v.car}</td>
+                            <td>{$v.motocycle}</td>
+                            <td>{$v.electric}</td>
+                            <td>{$v.gun_military}</td>
+                            <td>{$v.gun_other}</td>
+                            <td>{$v.bullet}</td>
+                            <td>{$v.explosive}</td>
+                            <td>{$v.detonator}</td>
+                            <td>{$v.narcotics_heroin}</td>
+                            <td>{$v.narcotics_other}</td>
+                            <td>{$v.money}</td>
+                            <td>{$v.discounts}</td>
+                            {/volist}
+                            {/volist}
+                        </tr>
+                        <tr>
+                            <td colspan="2">小计</td>
+                            <td>{$vo.car}</td>
+                            <td>{$vo.motocycle}</td>
+                            <td>{$vo.electric}</td>
+                            <td>{$vo.gun_military}</td>
+                            <td>{$vo.gun_other}</td>
+                            <td>{$vo.bullet}</td>
+                            <td>{$vo.explosive}</td>
+                            <td>{$vo.detonator}</td>
+                            <td>{$vo.narcotics_heroin}</td>
+                            <td>{$vo.narcotics_other}</td>
+                            <td>{$vo.money}</td>
+                            <td>{$vo.discounts}</td>
+                        </tr>
+
+                        {elseif condition="($vo.type == 'place')"/}
+                        <tr>
+                            <td>{$vo.name}</td>
+                            {volist name="vo.s_data" id="v"}
+                            <td>{$v.party_org_name}</td>
+                            <td>{$v.car}</td>
+                            <td>{$v.motocycle}</td>
+                            <td>{$v.electric}</td>
+                            <td>{$v.gun_military}</td>
+                            <td>{$v.gun_other}</td>
+                            <td>{$v.bullet}</td>
+                            <td>{$v.explosive}</td>
+                            <td>{$v.detonator}</td>
+                            <td>{$v.narcotics_heroin}</td>
+                            <td>{$v.narcotics_other}</td>
+                            <td>{$v.money}</td>
+                            <td>{$v.discounts}</td>
+                        </tr>
+                        {/volist}
+
+                        {elseif condition="($vo.type == 'special_bridge')"/}
+                        <tr>
+                            <td>{$vo.name}</td>
+                            {volist name="vo.s_data" id="v"}
+                            <td>{$v.party_org_name}</td>
+                            <td>{$v.car}</td>
+                            <td>{$v.motocycle}</td>
+                            <td>{$v.electric}</td>
+                            <td>{$v.gun_military}</td>
+                            <td>{$v.gun_other}</td>
+                            <td>{$v.bullet}</td>
+                            <td>{$v.explosive}</td>
+                            <td>{$v.detonator}</td>
+                            <td>{$v.narcotics_heroin}</td>
+                            <td>{$v.narcotics_other}</td>
+                            <td>{$v.money}</td>
+                            <td>{$v.discounts}</td>
+                        </tr>
+                        {/volist}
+
+                        {else /}
+                        <tr>
+                            {if condition="($vo.count == 'special')"}
+                            {volist name="vo.s_data" id="v"}
+                            <td colspan="2">{$v.party_org_name}</td>
+                            <td>{$v.car}</td>
+                            <td>{$v.motocycle}</td>
+                            <td>{$v.electric}</td>
+                            <td>{$v.gun_military}</td>
+                            <td>{$v.gun_other}</td>
+                            <td>{$v.bullet}</td>
+                            <td>{$v.explosive}</td>
+                            <td>{$v.detonator}</td>
+                            <td>{$v.narcotics_heroin}</td>
+                            <td>{$v.narcotics_other}</td>
+                            <td>{$v.money}</td>
+                            <td>{$v.discounts}</td>
+                            {/volist}
+                            {else /}
+                            <td rowspan="{$vo.count}">{$vo.name}</td>
+                            {volist name="vo.s_data" id="v" key="k"}
+                            {if condition="($k != 1)"}<tr>{/if}
+                            {volist name="v" id="item"}
+                            <td>{$item.party_org_name}</td>
+                            <td>{$item.car}</td>
+                            <td>{$item.motocycle}</td>
+                            <td>{$item.electric}</td>
+                            <td>{$item.gun_military}</td>
+                            <td>{$item.gun_other}</td>
+                            <td>{$item.bullet}</td>
+                            <td>{$item.explosive}</td>
+                            <td>{$item.detonator}</td>
+                            <td>{$item.narcotics_heroin}</td>
+                            <td>{$item.narcotics_other}</td>
+                            <td>{$item.money}</td>
+                            <td>{$item.discounts}</td>
+                            {/volist}
+                            {/volist}
+                            {if condition="($vo.count != 'special')"}
+                            <tr>
+                            <td colspan="2">小计</td>
+                            <td>{$vo.car}</td>
+                            <td>{$vo.motocycle}</td>
+                            <td>{$vo.electric}</td>
+                            <td>{$vo.gun_military}</td>
+                            <td>{$vo.gun_other}</td>
+                            <td>{$vo.bullet}</td>
+                            <td>{$vo.explosive}</td>
+                            <td>{$vo.detonator}</td>
+                            <td>{$vo.narcotics_heroin}</td>
+                            <td>{$vo.narcotics_other}</td>
+                            <td>{$vo.money}</td>
+                            <td>{$vo.discounts}</td>
+                            <tr>
+                            {/if}
+                            {/if}
+                        </tr>
+                        {/if}
+                        {/volist}
+                        {if $level < 4}
+                        <tr>
+                            <td colspan="2">总计</td>
+                            <td>{$listtotal.car}</td>
+                            <td>{$listtotal.motocycle}</td>
+                            <td>{$listtotal.electric}</td>
+                            <td>{$listtotal.gun_military}</td>
+                            <td>{$listtotal.gun_other}</td>
+                            <td>{$listtotal.bullet}</td>
+                            <td>{$listtotal.explosive}</td>
+                            <td>{$listtotal.detonator}</td>
+                            <td>{$listtotal.narcotics_heroin}</td>
+                            <td>{$listtotal.narcotics_other}</td>
+                            <td>{$listtotal.money}</td>
+                            <td>{$listtotal.discounts}</td>
+                        </tr>
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{css href="__CSS__jedate.css"/}
+{js href="__JS__multiselect.min.js,__JS__jquery.ajaxupload.js,__JS__jquery.jedate.js" /}
+{js href="__JS__jquery.table2excel.js" /}
+<script>
+    $(document).ready(function () {
+        $("#year").val('{$time.ym}');
+    });
+
+    $("#year").jeDate({
+        skinCell:"jedategreen",
+        isinitVal:true,
+        ishmsVal:false,
+        isClear:false, //是否显示清空
+        minDate: '1970-06-16',
+        maxDate: $.nowDate(0),
+        format:"YYYY-MM",
+        zIndex:3000,
+    })
+    function showdata() {
+        var year = $("#year").val();
+        window.location.href='{:zw_build_url(\'cases/statisticsCollection\')}?year='+year;
+    }
+    function downdata() {
+        var tbname =  $("#tbname").html();
+        $("#ta").table2excel({
+            exclude: ".noExl",
+            name: tbname,
+            filename: tbname,
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+        });
+    }
+</script>

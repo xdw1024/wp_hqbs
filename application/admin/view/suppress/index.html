@@ -1,0 +1,217 @@
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('border/index')}">边管业务管理</a>---缉私管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                {if zw_get_user_role_prototype()}{else /}
+                <a class="btn-success btn" href="{:zw_build_url('suppress/addSuppress')}"><span>添加缉私案件</span></a>
+                {/if}
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+            	<div class="table-responsive">
+                <table class="table table-hover table-striped ">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>单位&nbsp;&nbsp;&nbsp;</th>
+                        <th>时 间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>物品类别</th>
+                        <th>详细物品</th>
+                        <th>上报数量(吨)</th>
+                        <th>价值约(万)</th>
+                        <th>移交数量(吨)</th>
+                        <th>罚没款(元)</th>
+                        <th>核拨(次)</th>
+                        <th>移交处理情况</th>
+                        <th>涉案车辆</th>
+                        <th>涉案人员</th>
+                        <!--<th>车牌</th>-->
+                        <!--<th>存放地点</th>-->
+                        <!--<th>车辆型号</th>-->
+                        <!--<th>手机号码</th>-->
+                        <th>总队批复</th>
+                        <th>移交车辆</th>
+                        <th>移交案件</th>
+                        <th>案件返还</th>
+                        <th>处理情况</th>
+                        <th>备注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>月报截止&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th style="text-align: center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="suppress-table">
+                    {volist name="sup" id="item"}
+                    <tr id="{$item.suppress_id }">
+                        <td>{$i}</td>
+                        <td>{$item.party_org_name}</td>
+                        <td><?php echo(mb_substr($item['filing_time'],0,16)); ?></td>
+                        <td>{$item.goods_type}</td>
+                        <td>{$item.goods}</td>
+                        <td>{$item.report}</td>
+                        <td>{$item.goods_value}</td>
+                        <td>{$item.goods_tranfer}</td>
+                        <td>{$item.fines}</td>
+                        <td>{$item.verify}</td>
+                        <td>{$item.tranfer_result}</td>
+                        <td>{$item.vehicle_involved}</td>
+                        <td>{$item.personnel_involved}</td>
+                        <!--<td>{$item.license_plate}</td>-->
+                        <!--<td>{$item.storage_location}</td>-->
+                        <!--<td>{$item.vehicle_model}</td>-->
+                        <!--<td>{$item.mobile_num}</td>-->
+                        <td>{$item.corps_reply}</td>
+                        <td>{$item.vehicle_tranfer}</td>
+                        <td>{$item.case_tranfer}</td>
+                        <td>{$item.case_return}</td>
+                        <td>{$item.case_result}</td>
+                        <td><?php if(strlen($item['notes']) > 15){echo(mb_substr($item['notes'],0,15).'...');}else{echo(mb_substr($item['notes'],0,15));} ?></td>
+                        <td><?php echo(mb_substr($item['end_time'],0,16)); ?></td>
+                        <td>
+                            <a class="btn btn-success btn-sm" href="{:zw_build_url('suppress/supPerson')}?id={$item.suppress_id}" data-toggle="tooltip" >涉案人员</a>
+                            <a class="btn btn-success btn-sm" href="{:zw_build_url('suppress/supvehicle')}?id={$item.suppress_id}" data-toggle="tooltip" >涉案车辆</a>
+                            <a class="btn btn-success btn-sm" href="{:zw_build_url('suppress/editSuppress')}?id={$item.suppress_id}" data-toggle="tooltip" title="修改">修改</a>
+                            <a class="btn btn-sm btn-default" href="javascript:;" onclick="deleteSuppress('{$item.suppress_id}')">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                </div>
+                <div id="pagination-page" class="pagination_box">{$sup->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--{js href="__JS__multiselect.min.js,__JS__jquery.ajaxupload.js,__JS__jquery.jedate.js,__JS__colResizable-1.5.min.js," /}-->
+{js href="__JS__colResizable-1.6.js" /}
+<script>
+    function deleteSuppress(id) {
+        $.post('{:zw_build_url("suppress/deleteSuppress")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+    $(document).ready(function(){
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+        $(".table").colResizable({
+                liveDrag:true, 
+                gripInnerHtml:"<div class='grip'></div>", 
+                draggingClass:"dragging", 
+                resizeMode:'overflow', 
+                postbackSafe:true,
+                partialRefresh:true
+         }).addClass("table-bordered");
+    });
+
+    function searchNotice(search_info) {
+        ajaxResult("{:zw_build_url('suppress/searchsuppress')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var party_org_name = (null === item.party_org_name) ? '' : item.party_org_name;
+                        var filing_time = (null === item.filing_time) ? '' : item.filing_time;
+                        var goods_type = (null === item.goods_type) ? '' : item.goods_type;
+                        var goods = (null === item.goods) ? '' : item.goods;
+                        var report = (null === item.report) ? '' : item.report;
+                        var goods_value = (null === item.goods_value) ? '' : item.goods_value;
+                        var goods_tranfer = (null === item.goods_tranfer) ? '' : item.goods_tranfer;
+                        var fines = (null === item.fines) ? '' : item.fines;
+                        var verify = (null === item.verify) ? '' : item.verify;
+                        var tranfer_result = (null === item.tranfer_result) ? '' : item.tranfer_result;
+                        var vehicle_involved = (null === item.vehicle_involved) ? '' : item.vehicle_involved;
+                        var personnel_involved = (null === item.personnel_involved) ? '' : item.personnel_involved;
+                        var license_plate = (null === item.license_plate) ? '' : item.license_plate;
+                        var storage_location = (null === item.storage_location) ? '' : item.storage_location;
+                        var vehicle_tranfer = (null === item.vehicle_tranfer) ? '' : item.vehicle_tranfer;
+                        var vehicle_model = (null === item.vehicle_model) ? '' : item.vehicle_model;
+                        var mobile_num = (null === item.mobile_num) ? '' : item.mobile_num;
+                        var corps_reply = (null === item.corps_reply) ? '' : item.corps_reply;
+                        var case_tranfer = (null === item.case_tranfer) ? '' : item.case_tranfer;
+                        var case_return = (null === item.case_return) ? '' : item.case_return;
+                        var case_result = (null === item.case_result) ? '' : item.case_result;
+                        var notes = (null === item.notes) ? '' : item.notes;
+                        var end_time = (null === item.end_time) ? '' : item.end_time;
+                        html += '<tr id="' + item.suppress_id  + '">' +
+                                '         <td scope="row">'+(i+1)+'</td>' +
+                                '         <td>' + party_org_name + '</td>' +
+                                '         <td>' + filing_time + '</td>' +
+                                '         <td>' + goods_type + '</td>' +
+                                '         <td>' + goods + '</td>' +
+                                '         <td>' + report + '</td>' +
+                                '         <td>' + goods_value + '</td>' +
+                                '         <td>' + goods_tranfer + '</td>' +
+                                '         <td>' + fines + '</td>' +
+                                '         <td>' + verify + '</td>' +
+                                '         <td>' + tranfer_result + '</td>' +
+                                '         <td>' + vehicle_involved + '</td>' +
+                                '         <td>' + personnel_involved + '</td>' +
+//                                '         <td>' + license_plate + '</td>' +
+//                                '         <td>' + storage_location + '</td>' +
+//                                '         <td>' + vehicle_model + '</td>' +
+//                                '         <td>' + mobile_num + '</td>' +
+                                '         <td>' + corps_reply + '</td>' +
+                                '         <td>' + vehicle_tranfer + '</td>' +
+                                '         <td>' + case_tranfer + '</td>' +
+                                '         <td>' + case_return + '</td>' +
+                                '         <td>' + case_result + '</td>' +
+                                '         <td>' + notes + '</td>' +
+                                '         <td>' + end_time + '</td>' +
+                                '         <td>' +
+                                '             <a class="btn btn-success btn-sm" href="{:zw_build_url(\'suppress/supPerson\')}?id='+item.suppress_id+'" data-toggle="tooltip" >涉案人员</a>' +
+                                '             <a class="btn btn-success btn-sm" href="{:zw_build_url(\'suppress/supvehicle\')}?id='+item.suppress_id+'" data-toggle="tooltip" >涉案车辆</a>' +
+                                '             <a class="btn btn-success btn-sm" href="{:zw_build_url(\'suppress/editSuppress\')}?id='+item.suppress_id+'" data-toggle="tooltip" title="修改">修改</a>' +
+                                '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteSuppress('+item.suppress_id+')">删除</a>' +
+                                '         </td>' +
+                                '    </tr>';
+                    });
+                    $('#suppress-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+</script>

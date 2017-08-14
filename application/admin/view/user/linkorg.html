@@ -1,0 +1,265 @@
+{load href="__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="page-title">
+    <div class="title_left">
+        <h3><a href="{:zw_build_url('user/index')}">用户管理</a>---关联组织</h3>
+    </div>
+    <!--<div class="title_right">-->
+        <!--<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">-->
+            <!--<div class="input-group">-->
+                <!--<input type="text" id="searchUserKey" class="form-control" placeholder="请输入用户名">-->
+                <!--<span class="input-group-btn">-->
+                      <!--<button class="btn btn-default" type="button" onclick="searchUser()">检索</button>-->
+                <!--</span>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-2 col-xs-2" style="overflow: hidden; overflow-x: auto; height: 100%; width: 500px;">
+            <div class="x_panel" style="padding: 10px 5px">
+                <div class="x_title">
+                    <h2>组织架构</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="overflow: auto; max-height: 900px">
+                    <div class="zTreeDemoBackground left">
+                        <ul id="orgTree" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-10 col-xs-12" id="user_setting" style="width: calc(100% - 500px); display: none">
+            <div class="x_panel">
+                <div class="x_title">
+                    <a class="btn btn-success" href="javascript:;" onclick="addUser()"><span>添加关联用户</span></a>&nbsp;&nbsp;
+                    <!--<a class="glyphicon glyphicon-remove" href="javascript:;" ><span>批量取消关联</span></a>-->
+                </div>
+                <div class="x_content">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th width="60">序号</th>
+                            <th>用户ID</th>
+                            <th>用户名</th>
+                            <th>用户姓名</th>
+                            <th>性别</th>
+                            <th>电话</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="Member"></tbody>
+                    </table>
+
+                    <div class="panelBar">
+                        <div id="pagination-member" class="pagination_box"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="option_user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog" style="width: 1000px">
+        <div class="modal-content">
+            <form method="post" id="create_user_form" class="form-horizontal form-label-left" action="#">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加用户<span style="color: red"></span></h4>
+                </div>
+                <input type="hidden" name="org_id" id="LMOrgId">
+                <div class="modal-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th width="30"><input id="sAll"  type="checkbox" class="checkboxCtrl"></th>
+                            <th>用户ID</th>
+                            <th>用户名</th>
+                            <th>用户姓名</th>
+                            <th>性别</th>
+                            <th>电话</th>
+                        </tr>
+                        </thead>
+                        <tbody id="showMember1"></tbody>
+
+                    </table>
+                    <div id="pagination-page" class="pagination_box"></div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveLinkUser()">添加关联</a>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+    var setting = {
+        view: {
+            showIcon: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick         : onClick,
+            beforeExpand    : beforeExpand
+        }
+    };
+
+    var zNodes = {$org};
+
+    var LMOrgId = 0;
+
+    function onClick(event, treeId, treeNode, clickFlag) {
+        $('#user_setting').show();
+        LMOrgId = treeNode.id;
+        $('#LMOrgId').val(LMOrgId);
+        ajaxResult('{:zw_build_url("user/getMember")}' + "?org_id="+ LMOrgId);
+        return false;
+    }
+
+    // 展开节点触发 Mao 20170427
+    function beforeExpand(treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("orgTree");
+        var node_id = treeNode.id;
+        if(treeNode.children != undefined){
+            return;
+        }
+        // 先清空子节点
+        zTree.removeChildNodes(treeNode);
+        // 获取子节点
+        $.post('{:zw_build_url("user/getChildNodes")}', {node_id: node_id}, function (data) {
+            if (SUCCESS_CODE === data.status) {
+                var nodes = data.data;
+                // 再加载子节点
+                zTree.addNodes(treeNode,0, nodes,false);
+            }
+        })
+    }
+
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type: 'get',
+            success: function (data) {
+                var html = '';
+                if (data.status === SUCCESS_CODE) {
+                    $.each(data.data.data, function (i, item) {
+                        var sex = (1 === item.sex) ? '男' : '女';
+                        html += '<tr id="' + item.party_member_id + '">'
+                            + '<th width="60">' + (i + 1) + '</th>'
+                            + '<th>' + item.party_member_id + '</th>'
+                            + '<th>' + item.user_name + '</th>'
+                            + '<th>' + item.name + '</th>'
+                            + '<th>' +sex + '</th>'
+                            + '<th>' + item.mobile_num + '</th>'
+                            + '<th><a class="btn btn-success btn-sm" href="javascript:;" onclick="deleteLinkUser(' + item.party_member_id + ')">取消</a></th>'
+                            + '</tr>';
+                    });
+                }
+
+                $('#pagination-member').empty().append(data.data.page);
+                $('#Member').empty().append(html);
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        $.fn.zTree.init($("#orgTree"), setting, zNodes);
+        checkall();
+    });
+
+
+    function addUser() {
+        ajaxResultMember('{:zw_build_url("user/linkUser")}' + "?org_id="+ LMOrgId);
+        return false;
+    }
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResultMember(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    console.log(data.data);
+                    var html = '';
+
+//                    $('#pagination-page').empty().append(data.data.page);
+//                    $('#showMember1').empty().append(html);
+//                    $('#option_user').modal('show');
+
+                        $("#myModalLabel span").text(data.data.org_name);
+                        $.each(data.data.party_member, function(i, item) {
+                            html += '<tr>'
+                                + '<th width="30"><input id="checkbox" type="checkbox" value="'+ item.party_member_id +'" name="party_member[]" /></th>'
+                                + '<th>' + item.party_member_id + '</th>'
+                                + '<th>' + item.user_name + '</th>'
+                                + '<th>' + item.name + '</th>'
+                                + '<th>' + item.sex + '</th>'
+                                + '<th>' + item.mobile_num + '</th>'
+                                + '</tr>';
+                        });
+                    $('#pagination-page').empty().append(data.data.page);
+                    $('#showMember1').empty().append(html);
+                    $('#option_user').modal('show');
+                }
+
+                else{
+                    console.log(data);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+    function checkall() {
+        $('#sAll').change(function () {
+            if($(this).prop('checked')){
+                $(this).parents('table').children('tbody').find('input[type="checkbox"]').prop('checked',true);
+            }else{
+                $(this).parents('table').children('tbody').find('input[type="checkbox"]').prop('checked',false);
+            }
+        })
+        
+    }
+    function saveLinkUser() {
+        var options = {
+            url: '{:zw_build_url("user/saveLinkUser")}',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.status === SUCCESS_CODE) {
+                    window.location.reload();
+                }
+                else {
+                    console.log(data)
+                }
+            },
+            timeout: 6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#create_user_form").ajaxSubmit(options);
+
+    }
+
+    function deleteLinkUser(party_member_id) {
+        $.post('__ROUTE__admin/user/deleteLinkUser',{party_member_id: party_member_id}, function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+party_member_id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+
+</script>

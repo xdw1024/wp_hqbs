@@ -1,0 +1,224 @@
+{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css,__JS__ckeditor/ckeditor.js" /}
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><a href="{:zw_build_url('illegal/illegalperson')}?id={$ill_id}">非法入境人员管理</a>---新增非法入境人员信息</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+                <div class="col-md-12 col-sm-12 col-xs-12 red" id="tips">
+                    <span></span>
+                </div>
+                <br />
+                <form method="post" id="set_illp_form" class="form-horizontal form-label-left" action="#">
+                    <div class="col-md-9 col-sm-9 col-xs-12">
+                        <div class="x_content">
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="name">姓名 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="name" name="name" required="required" class="form-control col-md-12 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="sex">性别 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="sex" id="sex">
+                                        <option value="1" >男</option>
+                                        <option value="0" >女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="age">年龄 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="number" id="age" name="age"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="identity">身份 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="number" id="identity" name="identity"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="sourse_id">来源 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="sourse_id" id="sourse_id">
+                                        <option value="">请选择来源</option>
+                                        {volist name="sourse" id="item"}
+                                        <option value="{$item.sourse_id}">{$item.sourse_name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="entry_place_id">非法入境地段 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="entry_place_id" id="entry_place_id">
+                                        <option value="">请选择非法入境地段</option>
+                                        {volist name="entry" id="item"}
+                                        <option value="{$item.entry_place_id}">{$item.entry_place_name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="time">入境时间 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="time" name="time" readonly required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="timeslot">入境时段 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="timeslot" id="timeslot">
+                                        <option value="">请选择非法入境时段</option>
+                                        {volist name="slot" id="item"}
+                                        <option value="{$item.timeslot_id}">{$item.slotname}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="wherego_id">去向 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="wherego_id" id="wherego_id">
+                                        <option value="">请选择去向</option>
+                                        {volist name="wherego" id="item"}
+                                        <option value="{$item.wherego_id}">{$item.wherego_name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="purpose_id">入境目的 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="purpose_id" id="purpose_id">
+                                        <option value="">请选择入境地段目的</option>
+                                        {volist name="purpose" id="item"}
+                                        <option value="{$item.purpose_id}">{$item.purpose_name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="process_type_id">处理结果 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control col-md-12 col-xs-12" name="process_type_id" id="process_type_id">
+                                        <option value="">请选择处理结果</option>
+                                        {volist name="process" id="item"}
+                                        <option value="{$item.id}">{$item.process_type_name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" for="remarks">备注 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="remarks" name="remarks"  required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <input type="hidden" id="illegal_id" name="illegal_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 group_center">
+                            <a href="{:zw_build_url('illegal/illegalperson')}?id={$ill_id}" class="btn btn-default">取消</a>
+                            <a href="javascript:;" onclick="saveOption()" class="btn btn-success">保存</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{css href="__CSS__jedate.css"/}
+{js href="__JS__jquery.jedate.js" /}
+<script>
+    /**时间控件*/
+    var start = {
+        skinCell:"jedategreen",
+        format: 'YYYY-MM-DD hh:mm:ss',
+        minDate: $.nowDate(0), //设定最小日期为当前日期
+        isinitVal:true,
+        ishmsVal:false
+    };
+    var end = {
+        skinCell:"jedategreen",
+        format: 'YYYY-MM-DD',
+        maxDate: $.nowDate(0), //设定最小日期为当前日期
+        isinitVal:true,
+        ishmsVal:false
+    };
+    var date = {
+        skinCell:"jedategreen",
+        format: 'YYYY-MM-DD hh:mm:ss',
+        minDate:  "1970-01-01", //设定最小日期为当前日期
+        isinitVal:true,
+        ishmsVal:false
+    };
+    $(document).ready(function () {
+        $("#name").val();
+        $("#sex").val();
+        $("#age").val();
+        $("#identity").val();
+        $("#sourse_id").val();
+        $("#entry_place_id").val();
+        $("#purpose_id").val();
+        $("#process_type_id").val();
+        $("#wherego_id").val();
+        $("#remarks").val();
+        $("#timeslot").val();
+        $("#time").jeDate(end);
+        $("#time").val();
+        $("#illegal_id").val('{$ill_id}');
+
+    });
+
+    function saveOption() {
+        var name = $("#name").val();
+        if(name == ''){
+            show_notice('姓名必须填写,请输入信息再提交');
+            return;
+        }
+        var options = {
+            url: '{:zw_build_url("illegal/saveaddillperson")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    show_notice(data.message);
+                    window.location.href = data.data;
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#set_illp_form").ajaxSubmit(options);
+    }
+
+</script>

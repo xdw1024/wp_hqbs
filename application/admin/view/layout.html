@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>司令部业务系统</title>
+
+    {load href="__CSS__bootstrap.min.css,__CSS__font-awesome.min.css,__CSS__custom.css,__CSS__malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css,__JS__jquery-3.2.0.min.js" /}
+
+</head>
+
+<!--提示信息小窗口-->
+<div class="notice_bg"></div>
+<div class="status_alert error">
+    <h4 class="status_alert_title"><span class="glyphicon glyphicon-ok-sign"></span>&nbsp;<span class="status_alert_title_text"></span><span class="close">x</span></h4>
+    <p class="status_alert_info"></p>
+    <button class="btn btn-sm btn-default">确定</button>
+</div>
+<!--提示信息小窗口 end-->
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col menu_fixed">
+        	<div class="navbar nav_title" style="border: 0;">
+                <a href="{:zw_build_url('index/index')}" class="site_title">
+                	<img src="__IMAGES__logo1.png" width="35px" style="margin: 0 5px 0 15px; padding-bottom:7.5px ;">
+                	<span style="font-family: '黑体';">司令部业务系统</span>
+                </a>
+            </div>
+            <div class="left_col scroll-view">
+                
+                
+                <div class="nav_title" style="border: 0;"></div>
+                <div class="clearfix"></div>
+
+                <!-- menu profile quick info -->
+                <div class="profile clearfix">
+                    <div class="profile_pic">
+                    <img src="__IMAGES__t1.png" class="img-circle profile_img">
+                     
+                    </div>
+                    <div class="profile_info">
+                        <span>欢迎，</span>
+                        <h2>{:zw_get_admin_user_name()}</h2>
+                    </div>
+                </div>
+                <!-- /menu profile quick info -->
+
+                <br />
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+
+                        <ul class="nav side-menu">
+                            {:zw_get_admin_menu()}
+                        </ul>
+                    </div>
+
+                </div>
+                <!-- /sidebar menu -->
+
+                <!-- /menu footer buttons -->
+                <div class="sidebar-footer hidden-small clearfix">
+                    <!--<a data-toggle="tooltip" data-placement="top" title="Settings">-->
+                        <!--<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>-->
+                    <!--</a>-->
+                    <!--<a data-toggle="tooltip" data-placement="top" title="FullScreen">-->
+                        <!--<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>-->
+                    <!--</a>-->
+                    <!--<a data-toggle="tooltip" data-placement="top" title="Lock">-->
+                        <!--<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>-->
+                    <!--</a>-->
+                    <!--<a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">-->
+                        <!--<span class="glyphicon glyphicon-off" aria-hidden="true"></span>-->
+                    <!--</a>-->
+                </div>
+                <!-- /menu footer buttons -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <nav>
+                    <div class="nav toggle">
+                        <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                    </div>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <img src="__IMAGES__t1.png" alt="">{:zw_get_admin_user_name()}
+                                <span class=" fa fa-angle-down"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                <li><a href="javascript:;">个人资料</a></li>
+                                <li><a href="{$Think.config.logout_url}"><i class="fa fa-sign-out pull-right"></i>退出</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+            {__CONTENT__}
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer style="z-index: 100">
+            <div class="footer_" style="text-align: center; color: #333;">
+            <!--<div class="pull-right">-->
+                司令部业务系统
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+
+</body>
+
+{load href="__JS__bootstrap.min.js,__JS__custom.js,__JS__jquery.form.js,__CSS__malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js,__CSS__malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js" /}
+
+<script>
+    var SUCCESS_CODE = "{$Think.config.status_code['success']}";  // 成功返回值
+    var FAIL_CODE    = "{$Think.config.status_code['fail']}";  // 失败返回值
+    var WEB_ROOT    = "{$Think.config.status_code['web_root']}";  // 失败返回值
+
+    // 弹出提示消息，默认弹出成功标识
+    function show_notice(massage, status, refresh){
+        status = arguments[1] ? arguments[1] : 'success';
+        //修改样式
+        if(status === 'success')
+        {
+            $('.status_alert').removeClass('error').addClass('success');
+            $('.status_alert_title .glyphicon').removeClass('glyphicon-exclamation-sign').addClass('glyphicon-ok-sign');
+            $(".status_alert_title_text").text("");
+            $('.status_alert .btn').hide()
+        }
+        else
+        {
+            $('.status_alert').removeClass('success').addClass('error');
+            $('.status_alert_title .glyphicon').removeClass('glyphicon-ok-sign').addClass('glyphicon-exclamation-sign');
+            $(".status_alert_title_text").text("");
+            $('.status_alert .btn').show();
+            $('.notice_bg').fadeIn(500);
+        }
+        $('.status_alert .status_alert_info').text(massage);
+
+        $('.success').animate({top: '10px'}, 500);
+        $('.error').animate({top: '30%'}, 500);
+
+        $('.status_alert .btn').click(function(){
+            $('.status_alert').animate({top:'-500px'},500);
+            $('.notice_bg').fadeOut(500);
+            if (refresh)
+            {
+                window.location.reload();
+            }
+        });
+
+        $('.status_alert .close').click(function(){
+            $('.status_alert').animate({top:'-500px'},500);
+            $('.notice_bg').fadeOut(500);
+        });
+
+        setTimeout(function(){
+            $('.success').animate({top:'-500px' },500);
+        },3000)
+    }
+</script>
+
+</html>

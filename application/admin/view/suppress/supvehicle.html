@@ -1,0 +1,128 @@
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('suppress/index')}">缉私案件管理</a>---缉私涉案车辆管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                {if zw_get_user_role_prototype()}{else /}
+                <a class="btn-success btn" href="{:zw_build_url('suppress/addSupvehicle')}?id={$sup_id}"><span>添加涉案车辆</span></a>
+                {/if}
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>车牌</th>
+                        <th>型号</th>
+                        <th>存放地点</th>
+                        <th>移交情况</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="supvehicle-table">
+                    {volist name="vehicle" id="item"}
+                    <tr id="{$item.vehicle_id }">
+                        <td>{$i}</td>
+                        <td>{$item.license_plate}</td>
+                        <td>{$item.vehicle_model}</td>
+                        <td>{$item.storage_location}</td>
+                        <td>{if '1'==$item.tranferstatus}已移交{else /}未移交{/if}</td>
+                        <td>
+                            <a class="btn btn-success btn-sm" href="{:zw_build_url('suppress/editSupvehicle')}?id={$item.vehicle_id}" data-toggle="tooltip" title="修改">修改</a>
+                            <a class="btn btn-sm btn-default" href="javascript:;" onclick="deleteSupvehicle('{$item.vehicle_id}')">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$vehicle->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function deleteSupvehicle(id) {
+        $.post('{:zw_build_url("suppress/deleteSupvehicle")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+    $(document).ready(function(){
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    function searchNotice(search_info) {
+        var sup_id = '{$sup_id}';
+        ajaxResult("{:zw_build_url('suppress/searchsupvehicle')}" + "?search_info="+ encodeURI(search_info)+"&id="+sup_id);
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var license_plate = (null === item.license_plate) ? '' : item.license_plate;
+                        var tranferstatus = ('1' === item.tranferstatus) ? '已移交' : '未移交';
+                        var vehicle_model = (null === item.vehicle_model) ? '' : item.vehicle_model;
+                        var storage_location = (null === item.storage_location) ? '' : item.storage_location;
+                        html += '<tr id="' + item.person_id  + '">' +
+                                '         <td scope="row">'+(i+1)+'</td>' +
+                                '         <td>' + license_plate + '</td>' +
+                                '         <td>' + vehicle_model + '</td>' +
+                                '         <td>' + storage_location + '</td>' +
+                                '         <td>' + tranferstatus + '</td>' +
+                                '         <td>' +
+                                '             <a class="btn btn-success btn-sm" href="{:zw_build_url(\'suppress/editSupvehicle\')}?id='+item.vehicle_id+'" data-toggle="tooltip" title="修改">修改</a>' +
+                                '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteSupvehicle('+item.vehicle_id+')">删除</a>' +
+                                '         </td>' +
+                                '    </tr>';
+
+                    });
+                    $('#supvehicle-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+</script>

@@ -1,0 +1,327 @@
+{load href="__JS__jquery.ajaxupload.js,__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>新闻栏目管理</h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group">
+                <input type="text" id="searchLinkUserKey" class="form-control" placeholder="搜索">
+                <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" id="searchLinkUser" onclick="searchLinkUserKey()">Go!</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-2 col-xs-2" style="overflow: hidden; overflow-x: auto; height: 100%; width: 250px;">
+            <div class="x_panel" style="padding: 10px 5px">
+                <div class="x_title">
+                    <h2>新闻栏目管理</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="zTreeDemoBackground left">
+                        <ul id="orgTree" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-10 col-xs-12" id="menu_setting" style="width: calc(100% - 250px); display: none">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>栏目设置</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <form class="form-horizontal form-label-left" id="set_menu_save">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">栏目名称<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input name="menu_name" type="text" id="menu_name" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">栏目类型<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select name="app_menu_type" id="app_menu_type" class="form-control col-md-7 col-xs-12">
+                                    {volist name="app_menu_type" id="item"}
+                                    <option value="{$item.app_menu_type_id}">{$item.app_menu_type_name}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="icon_show_status">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">显示图标<span class="required">*</span></label>
+                            <div class="col-md-6 col-sm-6 col-xs-12 profile_left">
+                                <div class="well">
+                                    <div id="crop-avatar">
+                                        <img class="img-responsive avatar-view" src="" title="图标">
+                                    </div>
+                                    <div style="margin-top: 15px">
+                                        <div class="btn btn-mini btn-success" id="avatar_uploader">
+                                            上传图标
+                                        </div>
+                                        <span id="avatar_uploading_status" class="collapse" style="display: none;">
+                                                    <i class="aw-loading"></i>
+                                                    文件上传中...
+                                                </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="hidden" name="image_id" id="image_id">
+                            <input type="hidden" name="app_menu_id" id="app_menu_id">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">排序<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input name="sort_num" type="number" id="sort_num" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+
+                        <div class="ln_solid"></div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-6">
+                                <a type="submit" class="btn btn-default">返回</a>
+                                <a type="submit" class="btn btn-success" href="javascript:;" onclick="saveOption()">确定</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function ($) {
+        // Set fieldname
+        $.ajaxUploadSettings.name = 'upload';
+        // Set promptzone
+        $('#avatar_uploader').ajaxUploadPrompt({
+            url : '{:zw_build_url("Filemanager/saveFile?icon=icon")}',
+            beforeSend : function () {
+                $('#avatar_uploading_status').show();
+            },
+            onprogress : function (e) {
+                if (e.lengthComputable) {
+                    var percentComplete = e.loaded / e.total;
+                    $('#avatar_uploading_status').text('上传中…………' + 100 * percentComplete + '%');
+                }
+            },
+            error : function () {
+                $('#avatar_uploading_status').hide();
+//                show_notice('failed','服务器错误，请文件大小或联系管理员');
+//                $('#progress-bar').removeClass('progress-bar-info').addClass('progress-bar').addClass('progress-bar-danger');
+//                $('.uploadproof').removeClass('disabled').removeAttr('disabled').show();
+//                $('.progress').hide();
+            },
+            success : function (data) {
+                data = $.parseJSON(data);
+                $('#crop-avatar img').attr('src', data.url);
+                $('#image_id').val(data.resource_id);
+                $('#avatar_uploading_status').hide();
+            }
+        });
+    });
+
+    var setting = {
+        view: {
+            addHoverDom: addHoverDom,
+            removeHoverDom: removeHoverDom,
+            selectedMulti: false,
+            showIcon: false
+        },
+        edit: {
+            enable: true,
+            editNameSelectAll: true,
+            showRenameBtn: true,
+            showRemoveBtn: showRemoveBtn
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            beforeEditName  : beforeEditName,
+            beforeRemove    : beforeRemove,
+            beforeRename    : beforeRename,
+            beforeClick     : beforeClick
+        }
+    };
+
+    var zNodes = {$menu_tree};
+
+    function beforeEditName(treeId, treeNode) {
+        console.log('beforeEditName');
+        var zTree = $.fn.zTree.getZTreeObj("orgTree");
+        zTree.selectNode(treeNode);
+        setTimeout(function() {
+            if (confirm("进入节点 -- " + treeNode.name + " 的编辑状态吗？")) {
+                setTimeout(function() {
+                    zTree.editName(treeNode);
+                }, 0);
+            }
+        }, 0);
+        return false;
+    }
+
+    function beforeRemove(treeId, treeNode) {
+        if (confirm("确认删除 节点 -- " + treeNode.name + " 吗？"))
+        {
+            var zTree = $.fn.zTree.getZTreeObj("orgTree");
+            zTree.selectNode(treeNode);
+
+            $.post('{:zw_build_url("menu/deleteNode")}',{treeNodeId: treeNode.id},function(result){
+                if (SUCCESS_CODE === result.status)
+                {
+                    location.reload();
+                }
+                else
+                {
+                    alert('删除失败');
+                }
+            });
+            return true;
+        }
+        location.reload();
+    }
+
+    function beforeRename(treeId, treeNode, newName, isCancel) {
+        console.log('onRemove');
+        if (newName.length === 0) {
+            setTimeout(function() {
+                var zTree = $.fn.zTree.getZTreeObj("orgTree");
+                zTree.cancelEditName();
+                alert("节点名称不能为空.");
+            }, 0);
+            return true;
+        }
+
+        $.post('{:zw_build_url("menu/renameNode")}',{treeNodeId: treeNode.id, treeNodeName: newName},function(result){
+            if (SUCCESS_CODE === result.status)
+            {
+                location.reload();
+            }
+            else
+            {
+                alert('重命名失败');
+            }
+        });
+
+        return true;
+    }
+
+    function addHoverDom(treeId, treeNode) {
+        addBtn(treeId, treeNode);
+    }
+
+    // 添加节点
+    function addBtn(treeId, treeNode)
+    {
+        var sObj = $("#" + treeNode.tId + "_span");
+
+        if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length> 0) return;
+
+        var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
+            + "' title='添加单位' onfocus='this.blur();'></span>";
+        sObj.after(addStr);
+
+        var btn = $("#addBtn_"+treeNode.tId);
+        if (btn) btn.bind("click", function(){
+            var zTree = $.fn.zTree.getZTreeObj("orgTree");
+            var newName = prompt("添加新栏目","新栏目");
+            if (newName !== null && newName !== '')
+            {
+                $.post('{:zw_build_url("menu/insertNode")}',{treeNodeId: treeNode.id, treeNodeName: newName, pos: 'down'},function(result){
+                    console.log(result, SUCCESS_CODE);
+                    if (SUCCESS_CODE === result.status)
+                    {
+                        location.reload();
+                    }
+                    else
+                    {
+                        alert('添加失败');
+                    }
+                });
+            }
+            return false;
+        });
+    }
+
+    function showRemoveBtn(treeId, treeNode) {
+//            console.log(treeNode.level);
+        return treeNode.level > 0;
+    }
+
+    function beforeClick(treeId, treeNode, clickFlag) {   //click为true时不执行，默认为执行
+//            console.log(treeId, treeNode, clickFlag, (treeNode.click !== false));
+
+        (treeNode.level > 1) ? $("#icon_show_status").hide(): $("#icon_show_status").show();
+        $.post('{:zw_build_url("menu/getAppMenu")}',{menu_id: treeNode.id},function (data) { console.log(data.data.resource_path)
+            if(data.status === SUCCESS_CODE){
+                $('#menu_setting').show();
+                $('#menu_name').val(data.data.menu_name);
+//                $('#image_url').val(data.data.content);
+                $('#crop-avatar img').attr('src', WEB_ROOT + data.data.resource_path);
+                $('#app_menu_id').val(data.data.app_menu_id);
+                $('#app_menu_type').val(data.data.app_menu_type_id);
+                $('#sort_num').val(data.data.sort_num);
+//                $('#crop-avatar img').attr('src', data.data.content);
+            }
+            else
+            {
+                console.log(data)
+            }
+        });
+        return (treeNode.click !== false);
+    }
+
+    function removeHoverDom(treeId, treeNode) {
+//            console.log('removeHoverDom');
+        $("#addBtn_"+treeNode.tId).unbind().remove();
+    }
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#orgTree"), setting, zNodes);
+    });
+
+    function saveOption() {
+        var options = {
+            url: '{:zw_build_url("menu/saveMenuAttribute")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+//                    window.location.reload();
+                    console.log(data+"sus");
+                }
+                else
+                {
+                    console.log(data)
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#set_menu_save").ajaxSubmit(options);
+    }
+
+</script>

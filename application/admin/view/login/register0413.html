@@ -1,0 +1,42 @@
+<div class="animate form">
+    <section class="login_content">
+        <form action="__ROUTE__admin/login/createAccount" method="post">
+            <h1>创建帐号</h1>
+            <div>
+                <input type="text" class="form-control" placeholder="用户名" required="" name="user_name" />
+            </div>
+            <div>
+                <input type="text" class="form-control" placeholder="手机号" required="" name="phone_number"/>
+            </div>
+            <div>
+                <input type="password" class="form-control" placeholder="密码" required="" name="user_password"/>
+            </div>
+            <div>
+                <input type="password" class="form-control" placeholder="确认密码" required="" name="confirm_password"/>
+            </div>
+            <div >
+                <img src="{:zw_build_url('checkVerify')}" onclick="javascript:this.src='{:url(\'checkVerify\')}?tm='+Math.random();" style="cursor: pointer; margin-bottom: 10px; width: auto; float: right"/>
+                <input type="text" class="form-control" placeholder="请输入右边验证码" style="width: 70%" id ="code" name="code"/>
+            </div>
+            <div>
+                <button class="btn btn-default submit" type="submit">注册</button>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="separator">
+                <p class="change_link">已经有帐号 ？
+                    <a href="__ROUTE__admin/login" class="to_register">去登陆 </a>
+                </p>
+
+                <div class="clearfix"></div>
+                <br />
+
+                <div>
+                    <h1>智慧党建</h1>
+                    <p>©2017 All Rights Reserved. 智慧党建</p>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>

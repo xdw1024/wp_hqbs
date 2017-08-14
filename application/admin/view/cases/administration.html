@@ -1,0 +1,327 @@
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('border/index')}">边管业务管理</a>---案件数据管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="" role="tabpanel" data-example-id="togglable-tabs">
+    <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/index')}" id="home-tab" role="tab" aria-expanded="true">刑事案件</a>
+        </li>
+        <li role="presentation" class="active"><a href="{:zw_build_url('cases/administration')}" role="tab" id="profile-tab" aria-expanded="false">行政案件</a>
+        </li>
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/combat')}" role="tab" id="profile-tab2" aria-expanded="false">打击处理事件</a>
+        </li>
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/collection')}" role="tab" id="profile-tab3" aria-expanded="false">收缴情况</a>
+        </li>
+    </ul>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn btn-success" href="javascript:;" onclick="addAccount()"><span>添加案件</span></a>
+                <a class="btn btn-success" href="{:zw_build_url('cases/statisticsAdministration')}"><span>月度统计</span></a>
+                <a class="btn btn-success" href="{:zw_build_url('cases/cumulativeStatisticsAdministration')}"><span>累计统计</span></a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th style="text-align: center">序号</th>
+                            <th style="text-align: center">单位</th>
+                            <th style="text-align: center">案件名称</th>
+                            <th style="text-align: center">案件类型</th>
+                            <th style="text-align: center">动作</th>
+                            <th style="text-align: center">受理时间</th>
+                            <th style="text-align: center">查处时间</th>
+                            <th style="text-align: center">创建时间</th>
+                            <th style="text-align: center">案件描述</th>
+                            <th style="text-align: center">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cases-table">
+                        {volist name="list" id="vo"}
+                        <tr id="{$vo.id}">
+                            <td style="text-align: center">{$i}</td>
+                            <td style="text-align: center">{$vo.party_org_name}</td>
+                            <td>{$vo.case_name}</td>
+                            <td style="text-align: center">{$vo.type_name}</td>
+                            <td style="text-align: center">{$vo.option == 1 ? '查处' : '受理'}</td>
+                            <td><?php echo(mb_substr($vo['accept_time'],0,16)); ?></td>
+                            <!--<td>{$vo.accept_time}</td>-->
+                            <td><?php echo(mb_substr($vo['investigate_time'],0,16)); ?></td>
+                            <!--<td>{$vo.investigate_time}</td>-->
+                            <td><?php echo(mb_substr($vo['create_time'],0,16)); ?></td>
+                            <!--<td>{$vo.create_time}</td>-->
+                            <td>{$vo.content}</td>
+                            <td style="text-align: center">
+                                <a class="btn btn-success btn-sm" href="javascript:;" onclick="editAdministration('{$vo.id}')">修改</a>
+                                <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteAdministration('{$vo.id}')">删除</a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination-page" class="pagination_box">{$list->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） 添加 -->
+<div class="modal fade" id="option_admin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="option_user_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加行政案件</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">案件名称:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="case_name" name="case_name" placeholder="请输入案件名称" required="required">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">案件类型:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="type_id" id="type_id" required="required">
+                                {volist name="res" id="v"}
+                                <option value="{$v.id}">{$v.type_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">动作:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="option" id="option">
+                                <option value="0">受理</option>
+                                <option value="1">查处</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">受理时间:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="accept_time" name="accept_time" readonly>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">查处时间:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="investigate_time" name="investigate_time" readonly>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">案件描述:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <textarea class="form-control col-md-12 col-xs-12" id="content" name="content" placeholder="请输入案件描述"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <input type="hidden" name="action_status" id="action_status" value="insert">
+                        <input type="hidden" name="case_id" id="case_id">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveOption()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+{css href="__CSS__jedate.css"/}
+{js href="__JS__multiselect.min.js,__JS__jquery.ajaxupload.js,__JS__jquery.jedate.js,__JS__colResizable-1.6.js," /}
+{load href="__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.excheck.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<script>
+    $(document).ready(function () {
+        $("#accept_time").jeDate(start);
+        $(document).on("click","#accept_time",function(){
+            $(this).jeDate(start);
+        });
+
+        $("#investigate_time").jeDate(start);
+        $(document).on("click","#investigate_time",function(){
+            $(this).jeDate(start);
+        });
+
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                var search_info = $(this).val();
+                searchNotice($(this).val());
+            }
+        });
+
+        $(".table").colResizable({
+            liveDrag:true,
+            gripInnerHtml:"<div class='grip'></div>",
+            draggingClass:"dragging",
+            resizeMode:'overflow',
+            postbackSafe:true,
+            partialRefresh:true
+        }).addClass("table-bordered");
+    });
+
+    /**时间控件 start*/
+    var start = {
+        skinCell:"jedategreen",
+        hmsLimit:false,
+        format: 'YYYY-MM-DD hh:mm:ss',
+        maxDate: $.nowDate(0),
+        isinitVal:true,
+        ishmsVal:true
+    };
+    /**时间控件 end*/
+
+    function searchNotice(search_info) {
+        ajaxResult("{:zw_build_url('cases/searchAdministration')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, vo) {
+                        var party_org_name = (null === vo.party_org_name) ? '' : vo.party_org_name;
+                        var investigate_time = (null === vo.investigate_time) ? '' : vo.investigate_time;
+                        var option = (1 === vo.option) ? '查处' : '受理';
+                        html += '<tr id="' + vo.id + '">' +
+                            '         <td scope="row">'+(i+1)+'</td>' +
+                            '         <td>' + party_org_name + '</td>' +
+                            '         <td>' + vo.case_name + '</td>' +
+                            '         <td>' + vo.type_name + '</td>' +
+                            '         <td>' + option + '</td>' +
+                            '         <td>' + vo.accept_time + '</td>' +
+                            '         <td>' + investigate_time + '</td>' +
+                            '         <td>' + vo.create_time + '</td>' +
+                            '         <td>' + vo.content + '</td>' +
+                            '         <td>' +
+                            '             <a class="btn btn-success btn-sm" href="javascript:;" onclick="editAdministration('+vo.id+')">修改</a>' +
+                            '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteAdministration('+vo.id+')">删除</a>' +
+                            '         </td>' +
+                            '    </tr>';
+                    });
+                    console.log(html);
+                    $('#cases-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    console.log('222222');
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+    function addAccount() {
+        $('#case_name').val('');
+        $('#type_id').val('');
+        $('#option').val('0');
+        $('#accept_time').val('');
+        $('#investigate_time').val('');
+        $('#content').val('');
+        $('#case_id').val('');
+        $('#action_status').val('insert');
+        $('#myModalLabel').text('添加行政案件');
+        $('#option_admin').modal('show');
+    }
+
+    function saveOption() {
+        var addr = $('#case_name').val();
+        if(addr == ''){
+            show_notice('请输入信息再提交');
+            return;
+        }
+        var options = {
+            url: '{:zw_build_url("cases/saveAdministration")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                console.log(data);
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#option_user_form").ajaxSubmit(options);
+    }
+
+    function editAdministration(id) {
+        $.post('{:zw_build_url("cases/editAdministration")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                $('#case_name').val(data.data.case_name);
+                $('#type_id').val(data.data.case_type_id);
+                $('#option').val(data.data.option);
+                $('#accept_time').val(data.data.accept_time);
+                $('#investigate_time').val(data.data.investigate_time);
+                $('#content').val(data.data.content);
+                $('#case_id').val(data.data.id);
+                $('#action_status').val('editor');
+                $('#myModalLabel').text('修改行政案件');
+                $('#option_admin').modal('show');
+                return true;
+            }else{
+            }
+        });
+    }
+
+    function deleteAdministration(id) {
+        $.post('{:zw_build_url("cases/deleteAdministration")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+    </script>

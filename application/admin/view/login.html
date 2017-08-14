@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>司令部业务系统</title>
+    <!-- Bootstrap -->
+    <link href="__CSS__bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+    <link href="__CSS__custom.css" rel="stylesheet">
+    {load href="__CSS__bootstrap.min.css,__CSS__custom.css,__JS__jquery-3.2.0.min.js,__JS__jquery.form.js" /}
+    <style>
+        /*提示信息小窗口*/
+        .notice_bg {width: 100%;height: 100%; position: fixed;
+            top:0; z-index: 10001;background-color: rgba(0,0,0,0.5);display: none;}
+        .status_alert {width: 400px; position: fixed; top: -400px; left: 0; right: 0; word-break: break-all;min-height: 90px;max-height: 500px;overflow: auto; z-index: 10002;border-radius: 4px;margin: auto;box-sizing: border-box;padding: 0.8em;}
+        .success { color: #ffffff;background-color: rgba(38,185,154,0.88);border-color: rgba(38,185,154,0.88);}
+        .error {color: #000;background-color: rgba(255,255,255,1);border-color: rgba(231,76,60,0.88);}
+        .status_alert_title {margin-top: 0;}
+        .error .status_alert_title {color:#f39d1d }
+        .status_alert_info {text-indent: 2em;min-height: 20px;max-height: 400px;overflow: auto;}
+        .status_alert .btn {display: none;float: right;margin-bottom: 0;color: #000; border: 1px solid #ddd;padding: 5px 12px;}
+        .status_alert_title .close { font-size: 17px;font-weight: 100; color: #fff;filter: alpha(opacity=70);opacity: 0.7;margin-top: -3px;}
+        .status_alert_title .close:hover {filter: alpha(opacity=50);opacity: 0.5; }
+        /*提示信息小窗口 @end*/
+       
+       .login_wrapper {		    
+		    max-width: 350px;
+		    position: fixed;
+		    z-index: 1000;
+		    left:50%;
+		    top: 50%;
+		    margin-left:-175px;
+		    margin-top: -220px;
+		    padding-top: 0px;
+		}
+    </style>
+
+</head>
+<body style="background: url(__IMAGES__bg2.png) no-repeat;background-size: 100% 100%;height: 100%;width: 100%">
+<!--提示信息小窗口-->
+<div class="notice_bg"></div>
+<div class="status_alert error">
+    <h4 class="status_alert_title">
+        <span class="glyphicon glyphicon-ok-sign"></span>
+        <span class="status_alert_title_text"></span>
+        <span class="close">x</span></h4>
+    <p class="status_alert_info"></p>
+    <div class="btn btn-sm btn-default">确定</div>
+</div>
+<!--提示信息小窗口 end-->
+<div class="login_wrapper">
+    {__CONTENT__}
+</div>
+</body>
+<script>
+    var SUCCESS_CODE = "{$Think.config.status_code['success']}";  // 成功返回值
+    var FAIL_CODE    = "{$Think.config.status_code['fail']}";  // 失败返回值
+    // 弹出提示消息，默认弹出成功标识
+    function show_notice(massage, status, refresh){
+//        status = arguments[1] ? arguments[1] : 'success';
+        //修改样式
+        if(status === 'success')
+        {
+            $('.status_alert').removeClass('error').addClass('success');
+            $('.status_alert_title .glyphicon').removeClass('glyphicon-exclamation-sign').addClass('glyphicon-ok-sign');
+            $(".status_alert_title_text").text("");
+            $('.status_alert .btn').hide()
+        }
+        else
+        {
+            $('.status_alert').removeClass('success').addClass('error');
+            $('.status_alert_title .glyphicon').removeClass('glyphicon-ok-sign').addClass('glyphicon-exclamation-sign');
+            $(".status_alert_title_text").text("");
+            $('.status_alert .btn').show();
+            $('.notice_bg').fadeIn(100);
+        }
+        $('.status_alert .status_alert_info').text(massage);
+
+        $('.success').animate({top: '10px'}, 500);
+        $('.error').animate({top: '30%'}, 500);
+
+        $('.status_alert .btn').click(function(){
+            $('.status_alert').animate({top:'-400px'},500);
+            $('.notice_bg').fadeOut(400);
+            if (refresh)
+            {
+                window.location.reload();
+            }
+        });
+        $('.status_alert .close').click(function(){
+            $('.status_alert').animate({top:'-400px'},500);
+            $('.notice_bg').fadeOut(400);
+        });
+        setTimeout(function(){
+            $('.success').animate({top:'-400px' },500);
+        },3000)
+    }
+</script>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+    <title>
+        文件浏览
+    </title>
+    {load href="__CSS__bootstrap.min.css,__CSS__font-awesome.min.css,__CSS__custom.css,__JS__jquery-3.2.0.min.js" /}
+    <style>
+        html,body{padding: 0; margin: 0;width: 100%; height: 100%;background-color: #fff;}
+
+        .file-banner {width: 100%; height: 100%;padding: 0 20px 20px 5px;background-color: #f7f7f7;}
+        .file-banner .file-blog {box-shadow: 1px 3px 3px #999;position: relative;cursor: pointer;height: 175px;width: 150px; float:left; border: 1px solid #ddd;padding: 10px; margin-left: 15px;margin-top: 20px;box-sizing: border-box;background-color: #f4f6fa;}
+        .file-banner .file-blog .img-container {width: 100%; height: 120px;line-height: 120px;text-align: center;padding: 0 5px;}
+        .file-banner .file-blog .img-container img {width:100%; height: 100%;}
+        .file-banner .file-blog .img-container .file-icon {font-size: 90px;color: #a2b2c0;}
+
+        .file-banner .file-blog.type-images {background-image: url(../images/images-bg.png);background-repeat: no-repeat; background-size: contain;}
+        .file-banner .file-blog.type-images img{box-shadow: 1px 3px 6px #999;}
+
+        .file-banner .file-blog.type-video {background-color: #555;padding: 0;background-image: url(../images/video-bg.png) ;background-repeat: no-repeat;     background-size: contain;}
+        .file-banner .file-blog.type-video .img-container { padding: 0;height: 140px; line-height: 140px;}
+        .file-banner .file-blog.type-video .img-container img {border-bottom: 1px solid #777;}
+        .file-banner .file-blog.type-video .play-icon {font-size: 30px;  color:rgba(255,255,255,0.7);position: absolute;bottom: -2px;text-align: right;right: 10px;}
+
+        .file-banner .file-blog .file-name {position: absolute;left: 0;right: 0;bottom:-10px;color: #777;padding: 0 3px;text-align: center; overflow: hidden; text-overflow: ellipsis;white-space: nowrap;margin-top: 5px;background-color: #fff;height: 30px;line-height: 30px;border-top: 1px solid #ddd;}
+
+        .hover_mask {background-color: rgba(0,0,0,0.7);opacity: 0; transition: all 0.4s ease-in-out; position: absolute; top: 0; bottom: 0; left: 0px; right: 0px; z-index: 10;padding: 1em;}
+        .hover_mask p,.hover_mask p span {color: #71ecdd; font-weight: bold;margin: 0;font-size: 14px;}
+        .hover_mask .file_type,.hover_mask .file_info {font-weight: 100; color: #fff;font-size: 12px;}
+        .hover_mask p{ transform: translateY(100px); opacity: 0; transition: all 0.2s linear;}
+        .hover_mask .file_info{ transform: translateY(-100px); opacity: 0; transition: all 0.3s linear;}
+        .hover_mask .title {border-top:1px solid #fff; margin-top: 3px; padding-top: 3px;}
+        .file-blog:hover .hover_mask{opacity: 1;}
+        .file-blog:hover .hover_mask p{transform: translateY(0px);opacity: 1;}
+    </style>
+</head>
+<body>
+<div class="file-banner">
+    <!--文件类型-->
+    <div class="file-blog type-file">
+        <div class="img-container"><p class="file-icon"><i class="fa fa-file-text"></i></p></div>
+        <p class="file-name">文件名称</p>
+        <div class="hover_mask"><!--小遮罩层  文件相关信息展示-->
+            <p class="file_type"><span>类型：</span>文档</p>
+            <p class="title">名称：</p>
+            <p class="file_info">文件名称</p>
+        </div>
+    </div>
+    <!--文件类型 end-->
+
+    <!--图片类型-->
+    <div class="file-blog type-images">
+        <div class="img-container">
+            <img src="__STATIC__/img/img1.jpg"/>
+        </div>
+        <p class="file-name">文件名称</p>
+        <div class="hover_mask">
+            <p class="file_type"><span>类型：</span>图片</p>
+            <p class="title">名称：</p>
+            <p class="file_info">文件名称</p>
+        </div>
+    </div>
+    <!--图片类型 end-->
+
+    <!--视频类型-->
+    <div class="file-blog type-video">
+        <div class="img-container">
+
+        </div>
+        <p class="file-name">党的十八大指导精神</p>
+        <div class="hover_mask">
+            <p class="file_type"><span>类型：</span>视频</p>
+            <p class="title">名称：</p>
+            <p class="file_info">党的十八大指导精神党的十八大指导精神党的十八大指导精神</p>
+        </div>
+    </div>
+    <!--视频类型 end-->
+</div>
+
+</body>
+<script>
+    $(document).ready(function(){
+        $(".img-container img").each(function(i){
+            var img = $(this);
+            var realWidth;//真实的宽度
+            var realHeight;//真实的高度
+            //这里做下说明，$("<img/>")这里是创建一个临时的img标签，类似js创建一个new Image()对象！
+            $("<img/>").attr("src",img.attr("src")).load(function() {
+                /*
+                 要获取图片的真实的宽度和高度有三点
+                 1、需要创建一个image对象：如这里的$("<img/>")
+                 2、指定图片的src路径
+                 3、一定要在图片加载完成后执行如.load()函数里执行
+                 */
+                realWidth = this.width;
+                realHeight = this.height;
+                //如果真实的宽度大于浏览器的宽度就按照100%显示
+                if(realWidth > realHeight){
+                    img.css({'height':'auto','width':'100%'});
+                }
+                else if(realWidth < realHeight){
+                    img.css({'height':'100%','width':'auto'});
+                }
+                else{
+                    img.css({'height':'100%','width':'100%'});
+                }
+                img.parent('.img-container').parent('.file-blog').css('background-image','inherit');//图片加载完成后，去除背景图片
+            });
+        });
+        setFilestyle();
+    });
+
+    function setFilestyle(){
+        var clientwidth = document.body.clientWidth - 25;
+
+        var filenum = parseInt(clientwidth/150) ;//一行内文件格子的个数
+        if($('.file-blog').length >= filenum){
+            var fileblog_width = clientwidth/filenum-15-22;
+            $('.file-blog').width(fileblog_width);
+            $('.file-blog.type-video').width(fileblog_width+20);
+        }
+    }
+
+    window.onresize = function(){
+        setFilestyle();
+    }
+</script>
+</html>
+<a onclick="SetUrl('http://imgsrc.baidu.com/forum/w%3D580%3B/sign=7f5125d266061d957d4637304bcf0bd1/f31fbe096b63f624bd3065e98f44ebf81b4ca3ef.jpg');">sadasdads</a>
+<script type="text/javascript">
+    CKEditorFuncNum = '{$CKEditorFuncNum}';//CKEditorFuncNum和fileUrl想法从后台绑定
+    function SetUrl( fileUrl )
+    {
+        window.top.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, fileUrl);
+        window.top.close();
+    }
+</script>

@@ -1,0 +1,84 @@
+<style>
+    .table th {text-align: center}
+    .table td {text-align: center}
+    .datainp { width: 200px; height: 34px; margin-right: 5px; border: 1px #A5D2EC solid; }
+    .wicon { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat: no-repeat; background-position: right center; }
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h2 style="padding-top: 10px;"><a href="{:zw_build_url('illegal/index')}">非法入境信息管理</a>---处理情况统计</h2>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+        <div class="x_panel">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <span class="input-group-btn">
+                	<div class="input-group form-horizontal form-label-left search-input-group" style="float: left;margin-right: 10px;">
+		                <input class="form-control datainp wicon " id="year" type="text" placeholder="YYYY-MM" readonly style=" float: right;
+		    width: 120px; border-radius:0; background-color: #fff ">
+		                <span class="input-group-btn">
+		                    <button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>
+		                </span>
+		            </div>
+
+                    <button href="javascript:;" onclick="downdata()" class="btn btn-success" type="submit" style="border-radius:0 ">导出</button>
+                </span>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped table-bordered">
+                    <thead>
+                    <tr><th colspan="8">防城港市边防支队{$theyear}年各单位查获非法入境处理情况统计</th></tr>
+                    <tr>
+                        <th rowspan="3">单位</th>
+                        <th rowspan="3">批数</th>
+                        <th rowspan="3">人数</th>
+                        <th colspan="5">处理结果</th>
+                    </tr>
+                    <tr>
+                        {volist name="pro" id="item"}
+                        <th>{$item.process_type_name}</th>
+                        {/volist}
+                    </tr>
+                    </thead>
+                    <tbody id="protpe-table">
+                    {volist name="procount" id="item"}
+                    <tr id="{$item.party_org_id }">
+                        <td>{$item.party_org_name}</td>
+                        <td>{$item.illcount}</td>
+                        <td>{$item.personcount}</td>
+                        {volist name="pro" id="items"}
+                        <td>{$item[$items.usefield]}</td>
+                        {/volist}
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$page}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{css href="__CSS__jedate.css"/}
+{js href="__JS__jquery.jedate.js" /}
+<script>
+    $(document).ready(function () {
+        $("#year").val('{$theyear}');
+    });
+    $("#year").jeDate({
+        skinCell:"jedategreen",
+        isinitVal:true,
+        ishmsVal:false,
+        minDate: '1970-06-16 23:59:59',
+        maxDate: $.nowDate(0),
+        format:"YYYY",
+        zIndex:3000,
+    })
+    function showdata() {
+        var year = $("#year").val();
+        window.location.href='{:zw_build_url(\'illegal/processcount\')}?year='+year;
+    }
+</script>

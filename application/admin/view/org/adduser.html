@@ -1,0 +1,131 @@
+<script>
+    var add_link_user_user_id = new Array();
+</script>
+
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>批量添加关联<small>&nbsp;&nbsp;至&nbsp;&nbsp;<font color="#dc143c">{$orgName}</font></small></h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <select id="searchAddType" class="form-control">
+                <option value ="name">用户名</option>
+                <option value ="full">用户全名</option>
+            </select>
+            <div class="input-group">
+                <input type="text" id="searchAddLinkUserKey" class="form-control" placeholder="搜索">
+                <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" id="searchAddLinkUser" onclick="searchAddLinkUserKey()">Go!</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="pageContent">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <table class="table table-hover">
+
+                <thead>
+                <tr>
+                    <th><input id="sAll" onclick="selectAll()" type="checkbox" group="linkUserIds" class="checkboxCtrl"></th>
+                    <th >用户名</th>
+                    <th >用户全名</th>
+                    <th >关联用户</th>
+                    <th >关联角色</th>
+                </tr>
+                </thead>
+                <tbody id="showUser" >
+
+                {volist name="list" id="v"}
+                    <tr id="tr_add_link_user_{$v.authorized}">
+                        <td><input type="checkbox" name="linkUserIds" value="{$v.authorized}"></td>
+                        <td id="add_link_user_name_{$v.authorized}">{$v.userName}</td>
+                        <td id="add_link_user_full_{$v.authorized}">{$v.userFullName}</td>
+                        <td>{:getUserFullNameById($v.linkUserId)}</td>
+                        <td>{$v.roleName}</td>
+                    </tr>
+                <script>
+                    add_link_user_user_id.push({$v.authorized});
+                </script>
+                {/volist}
+
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+        <button type="button" class="btn btn-success" onclick="linkUser()">保存</button>
+        <button type="button" class="btn btn-default">取消</button>
+</div>
+
+
+<script>
+    function selectAll() {
+        var sAll = document.getElementById('sAll');
+        var checkbox = $('input[name="linkUserIds"]');
+        if(sAll.checked==true){
+            for(var i=0;i<checkbox.length;i++)
+            {
+                if(checkbox[i].checked==false)
+                {
+                    checkbox[i].checked=true;
+                }
+            }
+        }else{
+            for(var i=0;i<checkbox.length;i++)
+            {
+                if(checkbox[i].checked==true)
+                {
+                    checkbox[i].checked=false;
+                }
+            }
+        }
+    }
+
+    function searchAddLinkUserKey() {
+        var key = $.trim($('#searchAddLinkUserKey').val());
+        var type= $('#searchAddType').val();
+        add_link_user_user_id.forEach(function (val,i,arr) {
+            var id=  (type == 'name' ? '#add_link_user_name_' : '#add_link_user_full_')+val;
+            if ($(id).text().indexOf(key)<0){
+                $('#tr_add_link_user_'+val).hide();
+            }else{
+                $('#tr_add_link_user_'+val).show();
+            }
+
+        });
+    }
+    function linkUser() {
+        var userId = '';
+        $('input[name="linkUserIds"]:checked').each(function () {
+            userId += $(this).val() + ' ';
+        });
+
+//        var userId =[];
+//        $('input[name="linkUserIds"]:checked').each(function(){
+//            userId.push($(this).val());
+//        });
+        if ($.trim(userId)==''){
+            alert('未选择关联用户！');
+            return;
+        }
+
+        $.post('__ROUTE__org/addLinkUser', {
+            orgId: {$orgId},
+            userId: $.trim(userId)
+        }, function (data) {
+            if (data.status) {
+                alert(data.msg);
+            } else {
+                alert(data.msg);
+            }
+        });
+    }
+</script>

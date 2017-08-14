@@ -1,0 +1,436 @@
+﻿{load href="__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<div class="page-title">
+    <div class="title_left">
+        <h3>用户管理</h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn btn-success" href="{:zw_build_url('user/linkOrg')}"><span>组织关联</span></a>&nbsp;&nbsp;
+                <a class="btn btn-success" href="javascript:;" onclick="addmember()"><span>添加用户信息</span></a>&nbsp;&nbsp;
+                <!--<a href="__ROUTE__admin/user/uploadfile">注册</a>&nbsp;&nbsp;-->
+                <!--<a class="btn btn-success" href="javascript:;" onclick="uoOption()">批量注册</a>&nbsp;-->
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>用户名</th>
+                        <th>头像</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>所属组织</th>
+                        <th>可见组织</th>
+                        <th>手机号</th>
+                        <th>排序号</th>
+                        <th>操作</th>
+
+                    </tr>
+                    </thead>
+                    <tbody id="user-table">
+                    {volist name="party" id="item"}
+                    <tr id="{$item.party_member_id }">
+                        <td>{$i}</td>
+                        <td>{$item.user_name}</td>
+                        <td><img src="{:zw_build_url('filemanager/getfile')}/id/{$item.face_img_id}" style="width: 20px;height: 20px;"></td>
+                        <td>{$item.name}</td>
+                        <td>{if $item.sex=='1'}男{elseif $item.sex=='0' /}女{else /}{/if}</td>
+                        <td>{$item.party_org_name}</td>
+                        <td>{$item.view_org_name}</td>
+                        <td>{$item.mobile_num}</td>
+                        <td>{$item.sort_num}</td>
+                        <th>
+                            <!--<a class="btn btn-success" href="{ :zw_build_url('user/edit')}?id={$item.party_member_id}">修改</a>-->
+                            <a class="btn-success btn btn-sm" href="{:zw_build_url('user/editmemberinfo')}?id={$item.party_member_id}">编辑</a>
+                            <a class="btn-default btn btn-sm" href="javascript:;" onclick="deletepartymember('{$item.party_member_id}')">删除</a>
+                        </th>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$party->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="option_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="create_role_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="role_change">快速添加用户</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">用户名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="user_name" name="user_name" placeholder="请输入用户名">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">密码:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="password" class="form-control col-md-12 col-xs-12" id="password" name="password" placeholder="请输入密码">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">姓名:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="name" name="name" placeholder="请输入姓名">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">手机号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="mobile_num" name="mobile_num" placeholder="请输入手机号">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">所属组织:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12" style="position: relative">
+                            <input type="text" id="orgSelect" readonly class="form-control col-md-12 col-xs-12" onclick="showMenu('menuContent');" placeholder="请点击选择组织">
+                            <input type="hidden" name="party_org_id" id="party_org_id" class="form-control col-md-12 col-xs-12">
+                            <div id="menuContent" class="menuContentd" style="display:none;position: absolute; top: 34px;left: 10px; right:10px;z-index:100;background-color: #fff;border:1px solid #ddd;max-height: 350px;overflow-y: auto">
+                                <ul id="treeOrg" class="ztree" style="margin-top:0; width:300px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">可见组织:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12" style="position: relative">
+                            <input type="text" id="viewOrgSelect" readonly class="form-control col-md-12 col-xs-12" onclick="showMenu('viewOrgContent');" placeholder="请点击选择组织">
+                            <input type="hidden" name="view_org_id" id="view_org_id" class="form-control col-md-12 col-xs-12">
+                            <div id="viewOrgContent" class="menuContentd" style="display:none;position: absolute; top: 34px;left: 10px; right:10px;z-index:100;background-color: #fff;border:1px solid #ddd;max-height: 350px;overflow-y: auto">
+                                <ul id="treeViewOrg" class="ztree" style="margin-top:0; width:300px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">性别:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <select class="form-control col-md-12 col-xs-12" name="sex" id="sex">
+                                <option value="1">男</option>
+                                <option value="0">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">排序号:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="sort_num" name="sort_num" placeholder="请输入排序号">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <input type="hidden" name="action_status" id="action_status" value="insert">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">关闭</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveOption()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+{load href="__JS__jquery.ajaxupload.js" /}
+
+<div class="modal fade" id="option_user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel" id="option" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+                        <form  method="post" id ="fileform" action="#" class="pageForm required-validate" enctype="multipart/form-data" >
+                            <div class="pageFormContent">
+                                <label>上传文件：</label>
+                                <!--a href="javascript:;" class="file">
+                                   <input type="file" class="form-control" id="input_file" name="fileurl">点击选择文件
+                                </a-->
+                                <input type="file" class="form-control" id="fileurl" name="fileurl">
+                                <!--<button type="submit" class="btn btn-success">提交</button>-->
+                                <div class="modal-footer">
+                                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">关闭</a>
+                                    <a href="javascript:;" class="btn btn-success" onclick="subOption()">保存</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+{load href="__JS__dropzone.min.js,__CSS__dropzone.min.css" /}
+<div class="modal fade" id="option_admin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">上传文档</h4>
+            </div>
+            <form  class="dropzone" id="dropzone" name="fileurl">
+            </form>
+            <div class="modal-footer">
+                <a href="javascript:;" class="btn btn-default" data-dismiss="modal">关闭</a>
+                <!--<a href="javascript:;" class="btn btn-success" onclick="subOption()">保存</a>-->
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script>
+    Dropzone.autoDiscover = false;
+    $("#dropzone").dropzone({
+        url: '{:zw_build_url("user/userimport")}',//上传地址
+        dictDefaultMessage: "将文件拖拽至此区域",
+        addRemoveLinks: true,//添加移除文件
+        dictRemoveFile: "移除文件",
+        success:function (data, message) {
+            show_notice(message);
+            window.location.reload();
+        }
+    });
+</script>
+<script>
+    function subOption() {
+        var options = {
+            url: '{:zw_build_url("user/userimport")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    show_notice(message)
+//                    window.location.reload();
+                }
+                else
+                {
+                    console.log(data)
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#fileform").ajaxSubmit(options);
+    }
+
+    function deletepartymember(id) {
+        if (!confirm("确认要删除？")) {
+            window.event.returnValue = false;
+        }else{
+            $.post('{:zw_build_url("user/delete")}',{id: id},function (data) {
+                console.log(data);
+                if(data.status === SUCCESS_CODE){
+                    // 删除节点
+                    $('#'+id).remove();
+                    return true;
+                }else{
+                }
+            });
+        }
+    }
+
+
+    function addmember() {
+        $('#user_name').val('');
+        $('#password').val('');
+        $('#sex').val(1);
+        $("#orgSelect").val('');
+        $("#party_org_id").val('');
+        $('#mobile_num').val('');
+        $('#role_change').text('快速添加用户');
+        $('#action_status').val('insert');
+        $('#option_role').modal('show');
+    }
+
+    function uoOption() {
+        $('#fileurl').val('');
+        $('#role_change').text('用户批量注册');
+        $('#action_status').val('insert');
+        $('#option_admin').modal('show');
+    }
+
+    function saveOption() {
+        var vieworg =$("#view_org_id").val();
+        var partyorg =$("#party_org_id").val();
+        if(vieworg == partyorg){
+
+        }else{
+            if (!confirm("可见组织与所属组织不一致，是否继续执行？")) {
+                window.event.returnValue = false;
+                return;
+            }else{
+
+            }
+        }
+        var options = {
+            url: '{:zw_build_url("user/addPartyMember")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                if(data.status === SUCCESS_CODE){
+                    show_notice(data.message);
+                    window.location.reload();
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#create_role_form").ajaxSubmit(options);
+    }
+
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#treeOrg"), setting, zNodes);
+        $.fn.zTree.init($("#treeViewOrg"), vieworgsetting, zNodes);
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    function searchNotice(search_info) {
+        ajaxResult("{:zw_build_url('user/searchUser')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var sex = (1 === item.sex) ? '男' : '女';
+                        var sort_num = (null === item.sort_num) ? '' : item.sort_num;
+                        var party_org_name = (null === item.party_org_name) ? '' : item.party_org_name;
+                        var view_org_name = (null === item.view_org_name) ? '' : item.view_org_name;
+                        var user_name = (null === item.user_name) ? '' : item.user_name;
+                        var name = (null === item.name) ? '' : item.name;
+                        var mobile_num = (null === item.mobile_num) ? '' : item.mobile_num;
+                        html += '<tr id="' + item.party_member_id + '">' +
+                            '         <td scope="row">'+(i+1)+'</td>' +
+                            '         <td>' + user_name + '</td>' +
+                            '         <td><img src="{:zw_build_url(\'filemanager/getfile\')}/id/'+item.face_img_id+'" style="width: 20px;height: 20px;"></td>' +
+                            '         <td>' + name + '</td>' +
+                            '         <td>'+sex+'</td>' +
+                            '         <td>' + party_org_name + '</td>' +
+                            '         <td>' + view_org_name + '</td>' +
+                            '         <td>' + mobile_num + '</td>' +
+                            '         <td>' + sort_num + '</td>' +
+                            '         <td>' +
+                            '             <a class="btn-success btn btn-sm" href="{:zw_build_url(\'user/editmemberinfo\')}?id='+item.party_member_id+'">编辑</a>' +
+                            '             <a class="btn-default btn btn-sm" href="javascript:;" onclick="deletepartymember('+item.party_member_id+')">删除</a>' +
+                            '         </td>' +
+                            '    </tr>';
+                    });
+                    $('#user-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+    var setting = {
+        view: {
+//            dblClickExpand: false,
+            showIcon: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+
+    var vieworgsetting = {
+        view: {
+//            dblClickExpand: false,
+            showIcon: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: viewOrgOnClick
+        }
+    };
+    var zNodes ={$partyname};
+
+    function onClick(e, treeId, treeNode) {
+        console.log(treeId, treeNode.id, treeNode.name);
+        $("#orgSelect").val(treeNode.name);
+        $("#party_org_id").val(treeNode.id);
+        hideMenu('menuContent');
+    }
+
+    function viewOrgOnClick(e, treeId, treeNode) {
+        console.log('viewOrgOnClick', treeId, treeNode.id, treeNode.name);
+        $("#viewOrgSelect").val(treeNode.name);
+        $("#view_org_id").val(treeNode.id);
+        hideMenu('viewOrgContent');
+    }
+
+    function showMenu(name) {
+        $("#" + name).slideDown("fast");
+        $("body").bind("mousedown", onBodyDown);
+    }
+
+    function hideMenu(name) {
+        $("#" + name).fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+
+    function onBodyDown(event) {
+        if (!(event.target.id === "menuContent" || event.target.id === "viewOrgContent" || $(event.target).parents("#viewOrgContent").length>0  || $(event.target).parents("#menuContent").length>0)) {
+            hideMenu();
+        }
+    }
+
+</script>

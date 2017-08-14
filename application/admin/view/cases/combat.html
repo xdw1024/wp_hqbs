@@ -1,0 +1,410 @@
+<style>
+    .table th {text-align: center}
+    .table td {text-align: center}
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('border/index')}">边管业务管理</a>---案件数据管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="" role="tabpanel" data-example-id="togglable-tabs">
+    <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/index')}" id="home-tab" role="tab" aria-expanded="true">刑事案件</a>
+        </li>
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/administration')}" role="tab" id="profile-tab"  aria-expanded="false">行政案件</a>
+        </li>
+        <li role="presentation" class="active"><a href="{:zw_build_url('cases/combat')}" role="tab" id="profile-tab2" aria-expanded="false">打击处理事件</a>
+        </li>
+        <li role="presentation" class=""><a href="{:zw_build_url('cases/collection')}" role="tab" id="profile-tab3" aria-expanded="false">收缴情况</a>
+        </li>
+    </ul>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <a class="btn btn-success" href="javascript:;" onclick="addAccount()"><span>添加案件</span></a>
+                <a class="btn btn-success" href="{:zw_build_url('cases/statisticsCombat')}"><span>月度统计</span></a>
+                <a class="btn btn-success" href="{:zw_build_url('cases/cumulativeStatisticsCombat')}"><span>累计统计</span></a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th rowspan="3">序号</th>
+                            <th rowspan="3">单位</th>
+                            <th rowspan="3">案件名称</th>
+                            <th colspan="3">抓获违法犯罪嫌疑人</th>
+                            <th colspan="7">处理情况</th>
+                            <th colspan="2">打犯罪团伙</th>
+                            <th rowspan="3">处理时间</th>
+                            <th rowspan="3">创建时间</th>
+                            <th rowspan="3">操作</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">总数</th>
+                            <th colspan="2">其中</th>
+                            <th rowspan="2">刑事拘留</th>
+                            <th rowspan="2">行政拘留</th>
+                            <th rowspan="2">逮捕</th>
+                            <th rowspan="2">劳教</th>
+                            <th rowspan="2">罚款</th>
+                            <th rowspan="2">强制戒毒</th>
+                            <th rowspan="2">其他</th>
+                            <th rowspan="2">总数</th>
+                            <th rowspan="2">涉案人数</th>
+                        </tr>
+                        <tr>
+                            <th>非网逃</th>
+                            <th>网逃</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cases-table">
+                        {volist name="list" id="vo"}
+                        <tr id="{$vo.id}">
+                            <td>{$i}</td>
+                            <td>{$vo.party_org_name}</td>
+                            <td>{$vo.case_name}</td>
+                            <td>{$vo.suspect_criminal_count}</td>
+                            <td>{$vo.unfled}</td>
+                            <td>{$vo.fled}</td>
+                            <td>{$vo.ts_criminal_custody}</td>
+                            <td>{$vo.ts_administrative_detention}</td>
+                            <td>{$vo.ts_arrest}</td>
+                            <td>{$vo.ts_imprisonment}</td>
+                            <td>{$vo.ts_fine}</td>
+                            <td>{$vo.ts_drug}</td>
+                            <td>{$vo.ts_other}</td>
+                            <td>{$vo.total_count}</td>
+                            <td>{$vo.involved_num}</td>
+                            <td><?php echo(mb_substr($vo['case_time'],0,16)); ?></td>
+                            <!--<td>{$vo.case_time}</td>-->
+                            <td><?php echo(mb_substr($vo['time'],0,16)); ?></td>
+                            <!--<td>{$vo.time}</td>-->
+                            <td>
+                                <a class="btn btn-success btn-sm" href="javascript:;" onclick="editCombat('{$vo.id}')">修改</a>
+                                <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteCombat('{$vo.id}')">删除</a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination-page" class="pagination_box">{$list->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） 添加 -->
+<div class="modal fade" id="option_admin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="option_user_form" class="form-horizontal form-label-left" action="#">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加打击处理情况</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">案件名称:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="case_name" name="case_name" placeholder="请输入案件名称" required="required">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">抓获违法犯罪嫌疑人总数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="suspect_criminal_count" name="suspect_criminal_count" placeholder="请输入抓获违法犯罪嫌疑人总数" required="required">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">非网逃人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="unfled" name="unfled" placeholder="请输入非网逃人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">网逃人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="fled" name="fled" placeholder="请输入网逃人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">打犯罪团伙总数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="total_count" name="total_count" placeholder="请输入打犯罪团伙总数" required="required">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">涉案人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="involved_num" name="involved_num" placeholder="请输入涉案人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">刑事拘留人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="criminal_custody" name="criminal_custody" placeholder="请输入刑事拘留人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">行政拘留人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="administrative_detention" name="administrative_detention" placeholder="请输入行政拘留人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">逮捕人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="arrest" name="arrest" placeholder="请输入逮捕人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">劳教人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="imprisonment" name="imprisonment" placeholder="请输入劳教人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">罚款人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="fine" name="fine" placeholder="请输入罚款人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">强制戒毒人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="drug" name="drug" placeholder="请输入强制戒毒人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">其他人数:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="number" class="form-control col-md-12 col-xs-12" id="other" name="other" placeholder="请输入其他人数">
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">处理时间:</label>
+                        <div class="col-md-7 col-sm-7 col-xs-12">
+                            <input type="text" class="form-control col-md-12 col-xs-12" id="case_time" name="case_time" readonly>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <input type="hidden" name="action_status" id="action_status" value="insert">
+                        <input type="hidden" name="case_id" id="case_id">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+                    <a href="javascript:;" class="btn btn-success" onclick="saveOption()">保存</a>
+                </div>
+
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+{css href="__CSS__jedate.css"/}
+{js href="__JS__multiselect.min.js,__JS__jquery.ajaxupload.js,__JS__jquery.jedate.js,__JS__ckeditor/ckeditor.js" /}
+{load href="__JS__ztree/js/jquery.ztree.core.js,__JS__ztree/js/jquery.ztree.excheck.js,__JS__ztree/js/jquery.ztree.exedit.js,__JS__ztree/css/metroStyle/metroStyle.css" /}
+<script>
+    $(document).ready(function () {
+        $("#filing_time").jeDate(start);
+        $(document).on("click","#case_time",function(){
+            $(this).jeDate(start);
+        });
+
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                var search_info = $(this).val();
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    /**时间控件 start*/
+    var start = {
+        hmsLimit:false,
+        format: 'YYYY-MM-DD hh:mm:ss',
+        skinCell:"jedategreen",
+        maxDate: $.nowDate(0),
+        isinitVal:true,
+        ishmsVal:true
+    };
+    /**时间控件 end*/
+
+    function searchNotice(search_info) {
+        ajaxResult("{:zw_build_url('cases/searchCombat')}" + "?search_info="+ encodeURI(search_info));
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, vo) {
+                        var party_org_name = (null === vo.party_org_name) ? '' : vo.party_org_name;
+                        html += '<tr id="' + vo.id + '">' +
+                            '         <td scope="row">'+(i+1)+'</td>' +
+                            '         <td>' + party_org_name + '</td>' +
+                            '         <td>' + vo.case_name + '</td>' +
+                            '         <td>' + vo.suspect_criminal_count + '</td>' +
+                            '         <td>' + vo.unfled + '</td>' +
+                            '         <td>' + vo.fled + '</td>' +
+                            '         <td>' + vo.ts_criminal_custody + '</td>' +
+                            '         <td>' + vo.ts_administrative_detention + '</td>' +
+                            '         <td>' + vo.ts_arrest + '</td>' +
+                            '         <td>' + vo.ts_imprisonment + '</td>' +
+                            '         <td>' + vo.ts_fine + '</td>' +
+                            '         <td>' + vo.ts_drug + '</td>' +
+                            '         <td>' + vo.ts_other + '</td>' +
+                            '         <td>' + vo.total_count + '</td>' +
+                            '         <td>' + vo.involved_num + '</td>' +
+                            '         <td>' + vo.case_time + '</td>' +
+                            '         <td>' + vo.time + '</td>' +
+                            '         <td>' +
+                            '             <a class="btn btn-success btn-sm" href="javascript:;" onclick="editCombat('+vo.id+')">修改</a>' +
+                            '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteCombat('+vo.id+')">删除</a>' +
+                            '         </td>' +
+                            '    </tr>';
+                    });
+                    console.log(html);
+                    $('#cases-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    console.log('222222');
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+    function addAccount() {
+        $('#case_name').val('');
+        $('#suspect_criminal_count').val('');
+        $('#unfled').val('');
+        $('#fled').val('');
+        $('#total_count').val('');
+        $('#involved_num').val('');
+        $('#criminal_custody').val('');
+        $('#administrative_detention').val('');
+        $('#arrest').val('');
+        $('#imprisonment').val('');
+        $('#fine').val('');
+        $('#drug').val('');
+        $('#other').val('');
+        $('#case_time').val('');
+        $('#action_status').val('insert');
+        $('#myModalLabel').text('添加打击处理情况');
+        $('#option_admin').modal('show');
+    }
+
+    function saveOption() {
+        var addr = $('#case_name').val();
+        if(addr == ''){
+            show_notice('请输入信息再提交');
+            return;
+        }
+        var options = {
+            url: '{:zw_build_url("cases/saveCombat")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                console.log(data);
+                if(data.status === SUCCESS_CODE){
+                    window.location.reload();
+                }
+                else
+                {
+                    show_notice(data.message);
+                }
+            },
+            timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        };
+        $("#option_user_form").ajaxSubmit(options);
+    }
+
+    function editCombat(id) {
+        $.post('{:zw_build_url("cases/editCombat")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                $('#case_name').val(data.data.case_name);
+                $('#suspect_criminal_count').val(data.data.suspect_criminal_count);
+                $('#unfled').val(data.data.unfled);
+                $('#fled').val(data.data.fled);
+                $('#total_count').val(data.data.total_count);
+                $('#involved_num').val(data.data.involved_num);
+                $('#criminal_custody').val(data.data.ts_criminal_custody);
+                $('#administrative_detention').val(data.data.ts_administrative_detention);
+                $('#arrest').val(data.data.ts_arrest);
+                $('#imprisonment').val(data.data.ts_imprisonment);
+                $('#fine').val(data.data.ts_fine);
+                $('#drug').val(data.data.ts_drug);
+                $('#other').val(data.data.ts_other);
+                $('#case_time').val(data.data.case_time);
+                $('#case_id').val(data.data.id);
+                $('#action_status').val('editor');
+                $('#myModalLabel').text('修改打击处理情况');
+                $('#option_admin').modal('show');
+                return true;
+            }else{
+            }
+        });
+    }
+
+    function deleteCombat(id) {
+        $.post('{:zw_build_url("cases/deleteCombat")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+    </script>

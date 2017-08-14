@@ -1,0 +1,379 @@
+<style>
+    .table th {text-align: center}
+    .table td {text-align: center}
+    .datainp { width: 200px; height: 34px;}
+    .wicon { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat: no-repeat; background-position: right center; }
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h2 style="padding-top: 10px;"><a href="{:zw_build_url('cases/index')}">案件数据管理</a>---累计统计</h2>
+    </div>
+    <!--<div class="title_right">-->
+        <!--<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">-->
+            <!--<div class="input-group form-horizontal form-label-left search-input-group">-->
+                <!--<input class="form-control datainp wicon " id="year" type="text" placeholder="YYYY" readonly style=" float: right;-->
+    <!--width: 120px; border-radius:0; background-color: #fff ">-->
+                <!--<span class="input-group-btn">-->
+                    <!--<button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>-->
+                <!--</span>-->
+            <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <span class="input-group-btn">
+                	<div class="input-group form-horizontal form-label-left search-input-group" style="float: left;margin-right: 10px;">
+		                <input class="form-control datainp wicon " id="year" type="text" placeholder="YYYY" readonly style=" float: right;
+    width: 120px; border-radius:0; background-color: #fff ">
+		                <span class="input-group-btn">
+		                    <button href="javascript:;" onclick="showdata()" class="btn btn-success" type="submit" style=" border-radius:0 ">查看</button>
+		                </span>
+		            </div>
+                    <button href="javascript:;" onclick="downdata()" class="btn btn-success" type="submit" style="border-radius:0 ">导出</button>
+                </span>
+            </div>
+            <div class="x_content" style="padding: 0px;">
+                <div class="long-table-title">{$time.year}年防城港{if condition="($org.type == 'place')"}{$org.p_organization}{$org.organization}{elseif condition="($org.type == 'bridge')"/}{$org.organization}{else /}支队{/if}刑事案件统计表</div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered" id="ta">
+                        <thead>
+                        <tr style="display: none;">
+                            <th colspan="56" id="tbname">{$time.year}年防城港{if condition="($org.type == 'place')"}{$org.p_organization}{$org.organization}{elseif condition="($org.type == 'bridge')"/}{$org.organization}{else /}支队{/if}刑事案件统计表</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="5" colspan="2">单位/类别</th>
+                            <th colspan="12">立、破</th>
+                            <th colspan="42">案件分类</th>
+                        </tr>
+                        <tr>
+                            <th colspan="5">立案</th>
+                            <th colspan="7">破案</th>
+                            <th colspan="2">杀人</th>
+                            <th colspan="6">伤害</th>
+                            <th colspan="2">强奸</th>
+                            <th colspan="10">抢劫</th>
+                            <th colspan="10">盗窃</th>
+                            <th colspan="2">抢夺</th>
+                            <th colspan="2">拐卖妇女儿童</th>
+                            <th colspan="2">毒品犯罪</th>
+                            <th colspan="2">偷越国边境</th>
+                            <th colspan="2">组织他人偷越国边境</th>
+                            <th colspan="2">其他</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="3">共立（起）</th>
+                            <th rowspan="3">立年内案（起）</th>
+                            <th rowspan="3">补立年前案（起）</th>
+                            <th rowspan="3">去年同期（起）</th>
+                            <th rowspan="3">去年同期相比增减（%）</th>
+                            <th rowspan="3">共破（起）</th>
+                            <th rowspan="3">破年内案（起）</th>
+                            <th rowspan="3">破年前积案（起）</th>
+                            <th rowspan="3">去年同期（起）</th>
+                            <th colspan="3">破案率</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th colspan="4">其中</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th colspan="8">其中</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th colspan="8">其中</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                            <th rowspan="3">立</th>
+                            <th rowspan="3">破</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">年内破案率（%）</th>
+                            <th rowspan="2">去年破案率（%）</th>
+                            <th rowspan="2">与去年相比增减率（百分点）</th>
+                            <th colspan="2">致死</th>
+                            <th colspan="2">其他</th>
+                            <th colspan="2">入室抢</th>
+                            <th colspan="2">抢机动车</th>
+                            <th colspan="2">抢电动车</th>
+                            <th colspan="2">其他</th>
+                            <th colspan="2">入室盗</th>
+                            <th colspan="2">盗机动车</th>
+                            <th colspan="2">盗电动车</th>
+                            <th colspan="2">其他</th>
+                        </tr>
+                        <tr>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                            <th>立</th>
+                            <th>破</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cases-table">
+                        {volist name="list" id="vo"}
+                        {if condition="($vo.type == 'bridge')"}
+                        <tr>
+                            <td rowspan="{$vo.s_count}">{$vo.name}</td>
+                            {volist name="vo.s_data" id="temp" key="k"}
+                            {if condition="($k != 1)"}<tr>{/if}
+                            {volist name="temp" id="v"}
+                            <td>{$v.party_org_name}</td>
+                            <td>{$v.month_total_la}</td>
+                            <td>{$v.month_flag_la}</td>
+                            <td>{$v.flag_la_data}</td>
+                            <td>{$v.last_yaer_month_data}</td>
+                            <td>{$v.decrease_ratio}</td>
+                            <td>{$v.month_total_pa}</td>
+                            <td>{$v.pa_this_year_data}</td>
+                            <td>{$v.pa_last_total_data}</td>
+                            <td>{$v.last_yaer_month_pa}</td>
+                            <td>{$v.this_month_figures}</td>
+                            <td>{$v.last_month_figures}</td>
+                            <td>{$v.pa_ratio}</td>
+                            {volist name="v.type_id" id="j"}
+                            <td>{$j.la_sum}</td>
+                            <td>{$j.pa_sum}</td>
+                            {/volist}
+                            {/volist}
+                            {/volist}
+                        </tr>
+                        <tr>
+                            <td colspan="2">小计</td>
+                            <td>{$vo.month_total_la}</td>
+                            <td>{$vo.month_flag_la}</td>
+                            <td>{$vo.flag_la_data}</td>
+                            <td>{$vo.last_yaer_month_data}</td>
+                            <td>{$vo.decrease_ratio}</td>
+                            <td>{$vo.month_total_pa}</td>
+                            <td>{$vo.pa_this_year_data}</td>
+                            <td>{$vo.pa_last_total_data}</td>
+                            <td>{$vo.last_yaer_month_pa}</td>
+                            <td>{$vo.this_month_figures}</td>
+                            <td>{$vo.last_month_figures}</td>
+                            <td>{$vo.pa_ratio}</td>
+                            {volist name="vo.type_id" id="z"}
+                            <td>{$z.la_sum}</td>
+                            <td>{$z.pa_sum}</td>
+                            {/volist}
+                        </tr>
+
+                        {elseif condition="($vo.type == 'place')"/}
+                        <tr>
+                            <td>{$vo.name}</td>
+                            {volist name="vo.s_data" id="v"}
+                            <td>{$v.party_org_name}</td>
+                            <td>{$v.month_total_la}</td>
+                            <td>{$v.month_flag_la}</td>
+                            <td>{$v.flag_la_data}</td>
+                            <td>{$v.last_yaer_month_data}</td>
+                            <td>{$v.decrease_ratio}</td>
+                            <td>{$v.month_total_pa}</td>
+                            <td>{$v.pa_this_year_data}</td>
+                            <td>{$v.pa_last_total_data}</td>
+                            <td>{$v.last_yaer_month_pa}</td>
+                            <td>{$v.this_month_figures}</td>
+                            <td>{$v.last_month_figures}</td>
+                            <td>{$v.pa_ratio}</td>
+                            {volist name="v.type_id" id="j"}
+                            <td>{$j.la_sum}</td>
+                            <td>{$j.pa_sum}</td>
+                            {/volist}
+                        </tr>
+                        {/volist}
+
+                        {elseif condition="($vo.type == 'special_bridge')"/}
+                        <tr>
+                            <td>{$vo.name}</td>
+                            {volist name="vo.s_data" id="v"}
+                            <td>{$v.party_org_name}</td>
+                            <td>{$v.month_total_la}</td>
+                            <td>{$v.month_flag_la}</td>
+                            <td>{$v.flag_la_data}</td>
+                            <td>{$v.last_yaer_month_data}</td>
+                            <td>{$v.decrease_ratio}</td>
+                            <td>{$v.month_total_pa}</td>
+                            <td>{$v.pa_this_year_data}</td>
+                            <td>{$v.pa_last_total_data}</td>
+                            <td>{$v.last_yaer_month_pa}</td>
+                            <td>{$v.this_month_figures}</td>
+                            <td>{$v.last_month_figures}</td>
+                            <td>{$v.pa_ratio}</td>
+                            {volist name="v.type_id" id="j"}
+                            <td>{$j.la_sum}</td>
+                            <td>{$j.pa_sum}</td>
+                            {/volist}
+                        </tr>
+                        {/volist}
+
+                        {else /}
+                        <tr>
+                            {if condition="($vo.count == 'special')"}
+                            {volist name="vo.s_data" id="v"}
+                            <td colspan="2">{$v.party_org_name}</td>
+                            <td>{$v.month_total_la}</td>
+                            <td>{$v.month_flag_la}</td>
+                            <td>{$v.flag_la_data}</td>
+                            <td>{$v.last_yaer_month_data}</td>
+                            <td>{$v.decrease_ratio}</td>
+                            <td>{$v.month_total_pa}</td>
+                            <td>{$v.pa_this_year_data}</td>
+                            <td>{$v.pa_last_total_data}</td>
+                            <td>{$v.last_yaer_month_pa}</td>
+                            <td>{$v.this_month_figures}</td>
+                            <td>{$v.last_month_figures}</td>
+                            <td>{$v.pa_ratio}</td>
+                            {volist name="v.type_id" id="j"}
+                            <td>{$j.la_sum}</td>
+                            <td>{$j.pa_sum}</td>
+                            {/volist}
+                            {/volist}
+                            {else /}
+                            <td rowspan="{$vo.count}">{$vo.name}</td>
+                            {volist name="vo.s_data" id="v" key="k"}
+                            {if condition="($k != 1)"}<tr>{/if}
+                            {volist name="v" id="item"}
+                            <td>{$item.party_org_name}</td>
+                            <td>{$item.month_total_la}</td>
+                            <td>{$item.month_flag_la}</td>
+                            <td>{$item.flag_la_data}</td>
+                            <td>{$item.last_yaer_month_data}</td>
+                            <td>{$item.decrease_ratio}</td>
+                            <td>{$item.month_total_pa}</td>
+                            <td>{$item.pa_this_year_data}</td>
+                            <td>{$item.pa_last_total_data}</td>
+                            <td>{$item.last_yaer_month_pa}</td>
+                            <td>{$item.this_month_figures}</td>
+                            <td>{$item.last_month_figures}</td>
+                            <td>{$item.pa_ratio}</td>
+                            {volist name="item.type_id" id="j"}
+                            <td>{$j.la_sum}</td>
+                            <td>{$j.pa_sum}</td>
+                            {/volist}
+                            {/volist}
+                            {/volist}
+                            {/if}
+                        </tr>
+                        {if condition="($vo.count != 'special')"}
+                        <tr>
+                            <td colspan="2">小计</td>
+                            <td>{$vo.month_total_la}</td>
+                            <td>{$vo.month_flag_la}</td>
+                            <td>{$vo.flag_la_data}</td>
+                            <td>{$vo.last_yaer_month_data}</td>
+                            <td>{$vo.decrease_ratio}</td>
+                            <td>{$vo.month_total_pa}</td>
+                            <td>{$vo.pa_this_year_data}</td>
+                            <td>{$vo.pa_last_total_data}</td>
+                            <td>{$vo.last_yaer_month_pa}</td>
+                            <td>{$vo.this_month_figures}</td>
+                            <td>{$vo.last_month_figures}</td>
+                            <td>{$vo.pa_ratio}</td>
+                            {volist name="vo.type_id" id="z"}
+                            <td>{$z.la_sum}</td>
+                            <td>{$z.pa_sum}</td>
+                            {/volist}
+                        </tr>
+                        {/if}
+
+                        {/if}
+                        {/volist}
+
+                        {if $level < 4}
+                        <tr>
+                            <td colspan="2">总计</td>
+                            <td>{$listtotal.month_total_la}</td>
+                            <td>{$listtotal.month_flag_la}</td>
+                            <td>{$listtotal.flag_la_data}</td>
+                            <td>{$listtotal.last_yaer_month_data}</td>
+                            <td>{$listtotal.decrease_ratio}</td>
+                            <td>{$listtotal.month_total_pa}</td>
+                            <td>{$listtotal.pa_this_year_data}</td>
+                            <td>{$listtotal.pa_last_total_data}</td>
+                            <td>{$listtotal.last_yaer_month_pa}</td>
+                            <td>{$listtotal.this_month_figures}</td>
+                            <td>{$listtotal.last_month_figures}</td>
+                            <td>{$listtotal.pa_ratio}</td>
+                            {volist name="listtotal.type_id" id="z"}
+                            <td>{$z.la_sum}</td>
+                            <td>{$z.pa_sum}</td>
+                            {/volist}
+                        </tr>
+                        {/if}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{css href="__CSS__jedate.css"/}
+{js href="__JS__multiselect.min.js,__JS__jquery.ajaxupload.js,__JS__jquery.jedate.js" /}
+{js href="__JS__jquery.table2excel.js" /}
+<script>
+    $(document).ready(function () {
+        $("#year").val('{$time.year}');
+    });
+
+    $("#year").jeDate({
+        skinCell:"jedategreen",
+        isinitVal:true,
+        ishmsVal:false,
+        isClear:false, //是否显示清空
+        minDate: '1970',
+        maxDate: $.nowDate(0),
+        format:"YYYY",
+        zIndex:3000,
+    })
+
+    function showdata() {
+        var year = $("#year").val();
+        window.location.href='{:zw_build_url(\'cases/cumulativeStatisticsCriminal\')}?year='+year;
+    }
+
+    function downdata() {
+        var tbname =  $("#tbname").html();
+        $("#ta").table2excel({
+            exclude: ".noExl",
+            name: tbname,
+            filename: tbname,
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+        });
+    }
+</script>

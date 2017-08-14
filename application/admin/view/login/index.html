@@ -1,0 +1,61 @@
+<style type="text/css">
+	form{position:relative;width:305px;margin:15px auto 0 auto;text-align:center;color:#f7f7f7}input{width:300px;height:45px;margin-top:25px;padding:0 15px;background:#2d2d2d;background:rgba(45,45,45,.15);-webkit-border-radius:6px;border-radius:6px;border:1px solid #3d3d3d;border:1px solid rgba(255,255,255,.15);-moz-box-shadow:0 2px 3px 0 rgba(0,0,0,.1) inset;-webkit-box-shadow:0 2px 3px 0 rgba(0,0,0,.1) inset;box-shadow:0 2px 3px 0 rgba(0,0,0,.1) inset;font-family:'PT Sans',Helvetica,Arial,sans-serif;font-size:16px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.1);-o-transition:all .2s;-moz-transition:all .2s;-webkit-transition:all .2s}input:-moz-placeholder{color:#fff}input:-ms-input-placeholder{color:#fff}input::-webkit-input-placeholder{color:#fff}input:focus{outline:0;-moz-box-shadow:0 2px 3px 0 rgba(0,0,0,.1) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow:0 2px 3px 0 rgba(0,0,0,.1) inset,0 2px 7px 0 rgba(0,0,0,.2);box-shadow:0 2px 3px 0 rgba(0,0,0,.1) inset,0 2px 7px 0 rgba(0,0,0,.2)}button{cursor:pointer;width:300px;height:45px;margin:25px 0;padding:0;background:#F7F7F7;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #333;-moz-box-shadow:0 15px 30px 0 rgba(255,255,255,.25) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow:0 15px 30px 0 rgba(255,255,255,.25) inset,0 2px 7px 0 rgba(0,0,0,.2);box-shadow:0 15px 30px 0 rgba(255,255,255,.25) inset,0 2px 7px 0 rgba(0,0,0,.2);font-size:16px;color:#333;text-shadow:0 1px 2px rgba(0,0,0,.1);-o-transition:all .2s;-moz-transition:all .2s;-webkit-transition:all .2s;-ms-transition:all .2s}button:hover{-moz-box-shadow:0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow:0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2);box-shadow:0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2)}button:active{-moz-box-shadow:0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow:0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2);box-shadow:0 5px 8px 0 rgba(0,0,0,.1) inset,0 1px 4px 0 rgba(0,0,0,.1);border:0 solid #777}.separator{text-align:center;position:fixed;bottom:0;color:#f7f7f7;margin:0 auto;left:0;right:0}.h1s{margin-top:10px;margin-bottom:10px;font-family:"黑体"}
+</style>
+
+<div>
+	<form method="post" id="user_login_form">
+		<div class="h1s">
+			<h1>司令部业务系统</h1>
+		</div>
+		<div>
+			<input type="text" class="" placeholder="帐户名" name="phone_number" required="" />
+		</div>
+		<div>
+			<input type="password" class="" placeholder="密码" name="user_password" required="" />
+		</div>
+		<div>
+			<input type="text" class="" placeholder="请输入下边验证码" id="code" name="verify" required="" />
+		</div>
+		<div>
+			<img id="Verify" title="点击刷新验证码" src="{:zw_build_url('checkVerify')}" onclick="javascript:this.src='{:zw_build_url(\'login/checkVerify\')}?tm='+Math.random();" style="margin-top: 20px;cursor: pointer;width: 298px;height: 45px;border-radius: 6px;    border: 1px solid rgba(255, 255, 255, .15);" />
+		</div>
+		<div>
+			<button href="javascript:" onclick="saveOption()" style="text-decoration: none; font-size: medium; font-weight: bolder">登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;录</button>
+		</div>
+
+		<div class="clearfix"></div>
+	</form>
+	
+	<div class="separator">
+		<!--<h1>司令部业务系统</h1>-->
+		<p>©2017 All Rights Reserved. </p>
+	</div>
+</div>
+
+<script>
+	function saveOption() {
+		var options = {
+			url: '{:zw_build_url("login/login")}',
+			type: 'post',
+			dataType: 'json',
+			success: function(data) {
+				if(data.status === SUCCESS_CODE) {
+					window.location.href = data.data;
+				} else {
+					$('#Verify').attr('src', '{:zw_build_url("login/checkVerify")}?tm=' + Math.random());
+					$('#code').val('');
+					show_notice(data.message, 'fail');
+				}
+			},
+			timeout: 6000　　　　　　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+		};
+		$("#user_login_form").ajaxSubmit(options);
+	}
+	//回车提交表单
+	document.onkeydown = function(e) {
+		var ev = document.all ? window.event : e;
+		if(ev.keyCode == 13) {
+			saveOption();
+		}
+	}
+</script>

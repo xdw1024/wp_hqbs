@@ -1,0 +1,159 @@
+<div class="page-title">
+    <div class="title_left">
+        <h2><a href="{:zw_build_url('illegal/index')}">非法入境信息管理</a>---非法入境人员管理</h2>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group form-horizontal form-label-left search-input-group">
+                <input type="text" class="form-control search-text" placeholder="请输入搜索内容">
+                <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                {if zw_get_user_role_prototype()}{else /}
+                <a class="btn-success btn" href="{:zw_build_url('illegal/addillperson')}?id={$ill_id}"><span>添加非法入境人员</span></a>
+                {/if}
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>年龄</th>
+                        <th>身份</th>
+                        <th>来源</th>
+                        <th>非法入境地段</th>
+                        <th>入境时间</th>
+                        <th>入境时段</th>
+                        <th>入境目的</th>
+                        <th>去向</th>
+                        <th>处理结果</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="illperson-table">
+                    {volist name="person" id="item"}
+                    <tr id="{$item.person_id }">
+                        <td>{$i}</td>
+                        <td>{$item.name}</td>
+                        <td>{if '1'==$item.sex}男{else /}女{/if}</td>
+                        <td>{$item.age}</td>
+                        <td>{$item.identity}</td>
+                        <td>{$item.sourse_name}</td>
+                        <td>{$item.entry_place_name}</td>
+                        <td>{$item.time}</td>
+                        <td>{if $item.timeslot=='1'}8时-12时{elseif $item.timeslot=='2' /}12时-18时{elseif  $item.timeslot=='3' /}18时-8时{else /}不详{/if}</td>
+                        <td>{$item.purpose_name}</td>
+                        <td>{$item.wherego_name}</td>
+                        <td>{$item.process_type_name}</td>
+                        <td><?php if(strlen($item['remarks']) > 15){echo(mb_substr($item['remarks'],0,15).'...');}else{echo(mb_substr($item['remarks'],0,15));} ?></td>
+                        <td>
+                            <a class="btn btn-success btn-sm" href="{:zw_build_url('illegal/editillperson')}?id={$item.person_id}" data-toggle="tooltip" title="修改">修改</a>
+                            <a class="btn btn-sm btn-default" href="javascript:;" onclick="deleteillperson('{$item.person_id}')">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div id="pagination-page" class="pagination_box">{$person->render()}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function deleteillperson(id) {
+        $.post('{:zw_build_url("illegal/deleteillperson")}',{id: id},function (data) {
+            console.log(data);
+            if(data.status === SUCCESS_CODE){
+                // 删除节点
+                $('#'+id).remove();
+                return true;
+            }else{
+            }
+        });
+    }
+    $(document).ready(function(){
+        $('.search-input-group span button').click(function(){
+            searchNotice($('.search-input-group .search-text').val());
+        });
+        $('.search-input-group .search-text').keydown(function(e){
+            if(e.keyCode === 13){
+                searchNotice($(this).val());
+            }
+        });
+    });
+
+    function searchNotice(search_info) {
+        var ill_id = '{$ill_id}';
+        ajaxResult("{:zw_build_url('illegal/searchillperson')}" + "?search_info="+ encodeURI(search_info)+"&id="+ill_id);
+        return false;
+    }
+
+    /*处理ajax翻页，在翻页类中定义 app\admin\driver\ZzwuAjaxPage */
+    function ajaxResult(url) {
+        $.ajax({
+            url: url,
+            type:'get',
+            success: function(data){
+                if(data.status === SUCCESS_CODE){
+                    var html = '';
+                    $.each(data.data.data, function (i, item) {
+                        var name = (null === item.name) ? '' : item.name;
+                        var sex = ('1' === item.sex) ? '男' : '女';
+                        var age = (null === item.age) ? '' : item.age;
+                        var identity = (null === item.identity) ? '' : item.identity;
+                        var sourse_name = (null === item.sourse_name) ? '' : item.sourse_name;
+                        var entry_place_name = (null === item.entry_place_name) ? '' : item.entry_place_name;
+                        var time = (null === item.time) ? '' : item.time;
+                        var purpose_name = (null === item.purpose_name) ? '' : item.purpose_name;
+                        var process_type_name = (null === item.process_type_name) ? '' : item.process_type_name;
+                        var remarks = (null === item.remarks) ? '' : item.remarks;
+                        var wherego_name = (null === item.wherego_name) ? '' : item.wherego_name;
+
+                        html += '<tr id="' + item.person_id  + '">' +
+                                '         <td scope="row">'+(i+1)+'</td>' +
+                                '         <td>' + name + '</td>' +
+                                '         <td>' + sex + '</td>' +
+                                '         <td>' + age + '</td>' +
+                                '         <td>' + identity + '</td>' +
+                                '         <td>' + sourse_name + '</td>' +
+                                '         <td>' + entry_place_name + '</td>' +
+                                '         <td>' + time + '</td>' +
+                                '         <td>' + purpose_name + '</td>' +
+                                '         <td>' + wherego_name + '</td>' +
+                                '         <td>' + process_type_name + '</td>' +
+                                '         <td>' + remarks + '</td>' +
+                                '         <td>' +
+                                '             <a class="btn btn-success btn-sm" href="{:zw_build_url(\'illegal/editillperson\')}?id='+item.person_id+'" data-toggle="tooltip" title="修改">修改</a>' +
+                                '             <a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteillperson('+item.person_id+')">删除</a>' +
+                                '         </td>' +
+                                '    </tr>';
+
+                    });
+                    $('#illperson-table').empty().append(html);
+                    $('#pagination-page').empty().append(data.data.page);
+                }
+                else{
+                    show_notice(data.message);
+                }
+                return false;
+            }
+        });
+        return false;
+    }
+
+</script>

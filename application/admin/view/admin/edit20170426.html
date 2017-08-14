@@ -1,0 +1,125 @@
+<div class="page-title">
+    <div class="title_left">
+        <h3>用户管理</h3>
+    </div>
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <form method="post" id="" class="form-horizontal form-label-left" action="{:zw_build_url('admin/index')}">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search_name" placeholder="请输入搜索内容">
+                    <span class="input-group-btn">
+                          <button class="btn btn-success" type="submit">搜索</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>用户编辑</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <br />
+                <form id="maccount_edit" class="form-horizontal form-label-left" action="#">
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12">所属角色 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <select id="role_id" name="role_id"  class="form-control col-md-7 col-xs-12" required>
+                                <!--<option value="">请选择所属分类</option>-->
+                                {foreach name="role_list" item="v"}
+                                <option value="{$v.sys_role_id}" selected = "{if condition="$v.sys_role_id eq $admin_list.sys_role_id"}selected{/if}">{$v.sys_role_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12" >帐号名 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <input type="text" id="maccount_name" name="maccount_name" required="required" class="form-control col-md-7 col-xs-12" value="{$admin_list.maccount_name}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12">真实姓名 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <input type="text" id="mreal_name" name="mreal_name" required="required" class="form-control col-md-7 col-xs-12" value="{$admin_list.mreal_name}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12">手机号 <span class="required">*</span></label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <input id="mobile_number" class="form-control col-md-7 col-xs-12" type="text" name="middle-name" value="{$admin_list.mobile_number}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12">密码 <span class="required">*</span></label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <input id="mpassword" class="form-control col-md-7 col-xs-12" type="password" name="middle-name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12">审核状态 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <select id="state" name="state"  class="form-control col-md-7 col-xs-12" required>
+                                <!--<option value="">请选择所属分类</option>-->
+                                <option value="1" selected="{if condition="$admin_list.is_use eq 1"}selected{/if}">已审</option>
+                                <option value="0" selected="{if condition="$admin_list.is_use eq 0"}selected{/if}" >未审</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
+                        <!--<input type="hidden" name="action_status" id="action_status" value="insert">-->
+                        <input type="hidden" name="maccount_id" id="maccount_id" value="{$admin_list.maccount_id}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-5 col-xs-12"><span class="required"></span>
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12 group_center">
+                            <!--<a class="btn btn-success">上传视频</a>-->
+                            <a class="btn btn-default" type="reset" href="javascript:;" onclick="preview()">取消</a>
+                            <a class="btn btn-success" href="javascript:;" onclick="save()">保存</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function save() {
+        var option = {
+            url: '{:zw_build_url("admin/editSave")}',
+            type: 'post',
+            dataType :'json',
+            success: function (data) {
+                    if(data.status === SUCCESS_CODE){
+                        window.location.reload();
+                    }else{
+                        console.log(data)
+                    }
+                },
+                timeout:6000 　　　　　 　 //设置请求时间，超过该时间后，自动退出请求，单位(毫秒)。　　　
+        }
+    }
+    $("#maccount_edit").ajaxSubmit(options);
+</script>
